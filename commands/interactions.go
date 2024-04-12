@@ -1,6 +1,10 @@
 package commands
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"calibot/commands/interactions"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	// Handle interaction type
@@ -8,12 +12,7 @@ func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		// Handle the "/hello" command
 		if i.ApplicationCommandData().Name == "hello" {
 			// Respond to the command with "hello"
-			response := &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Content: "hello",
-				},
-			}
+			response := interactions.Hello().InteractionResponse
 			_ = s.InteractionRespond(i.Interaction, response)
 		}
 	}
