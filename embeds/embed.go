@@ -25,15 +25,19 @@ func NewRichEmbed(title string, description string, color int) *Embed {
 func (embed *Embed) AddField(name string, value string, inline bool) *Embed {
 	fields := make([]*discordgo.MessageEmbedField, 0)
 
-	fields = append(fields, &discordgo.MessageEmbedField{
-		Name:   name,
-		Value:  value,
-		Inline: inline,
-	})
+	fields = append(fields, createField(name, value, inline))
 
 	embed.Fields = append(embed.Fields, fields...)
 
 	return embed
+}
+
+func createField(name string, value string, inline bool) *discordgo.MessageEmbedField {
+	return &discordgo.MessageEmbedField{
+		Name:   name,
+		Value:  value,
+		Inline: inline,
+	}
 }
 
 func (embed *Embed) SetImage(url string, width int, height int) *Embed {
