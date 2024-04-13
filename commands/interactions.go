@@ -6,14 +6,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func InteractionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func InteractionCreate(s *discordgo.Session, interaction *discordgo.InteractionCreate) {
 	// Handle interaction type
-	if i.Type == discordgo.InteractionApplicationCommand {
+	if interaction.Type == discordgo.InteractionApplicationCommand {
 		// Handle the "/hello" command
-		if i.ApplicationCommandData().Name == "hello" {
+		if interaction.ApplicationCommandData().Name == "hello" {
 			// Respond to the command with "hello"
-			response := interactions.Hello().InteractionResponse
-			_ = s.InteractionRespond(i.Interaction, response)
+			response := interactions.Hello(interaction).InteractionResponse
+			_ = s.InteractionRespond(interaction.Interaction, response)
 		}
 	}
 }
