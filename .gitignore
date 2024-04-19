@@ -1,2 +1,4 @@
 .env
 .vscode
+resources/weapons.json
+resources/wears.json

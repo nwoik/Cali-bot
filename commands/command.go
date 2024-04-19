@@ -60,3 +60,17 @@ func (command *Command) SetApplicationCommandType(commandType discordgo.Applicat
 
 	return command
 }
+
+func (command *Command) SetOptions(options []*discordgo.ApplicationCommandOption) *Command {
+	command.Options = options
+
+	return command
+}
+
+// func (command *Command) AddOption(name string, description string, optionType discordgo.ApplicationCommandOptionType, required bool) *Command {
+// 	commandOption := NewCommandOption(name, description, optionType, required)
+
+// 	command.Options = append(command.Options, commandOption.ApplicationCommandOption)
+
+// 	return command
+// }

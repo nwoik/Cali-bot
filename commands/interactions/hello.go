@@ -7,14 +7,8 @@ import (
 )
 
 func Hello(interaction *discordgo.InteractionCreate) *responses.Response {
-	data := responseData(interaction)
+	data := responses.NewResponseData("Hello " + interaction.Member.User.Mention())
 	response := responses.NewMessageResponse(data.InteractionResponseData)
 
 	return response
-}
-
-func responseData(interaction *discordgo.InteractionCreate) *responses.Data {
-	data := responses.NewResponseData("Hello " + interaction.Member.User.Mention())
-
-	return data
 }
