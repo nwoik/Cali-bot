@@ -8,24 +8,12 @@ func RegisterCommand(s *discordgo.Session) error {
 
 	commands := make([]*discordgo.ApplicationCommand, 0)
 
-	// Add commands here
-	hello := NewChatApplicationCommand("hello", "Says hello")
-
 	register := NewChatApplicationCommand("register", "Registers a user with the bot")
-	options := []*discordgo.ApplicationCommandOption{
-		{
-			Type:        discordgo.ApplicationCommandOptionString,
-			Name:        "name",
-			Description: "Your name",
-			Required:    true,
-		},
-	}
 
-	hello.SetOptions(options)
-	// register.AddOption("hello", "Your in-game name", discordgo.ApplicationCommandOptionString, true)
-	// register.AddOption("Game-ID", "Your in-game ID", discordgo.ApplicationCommandOptionInteger, true)
+	register.SetOptions(AddOption(register.GetOptions(), "ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true))
+	register.SetOptions(AddOption(register.GetOptions(), "gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true))
 
-	commands = append(commands, hello.ApplicationCommand)
+	// Add commands here
 	commands = append(commands, register.ApplicationCommand)
 
 	// Register the command globally
@@ -37,8 +25,10 @@ func RegisterCommand(s *discordgo.Session) error {
 	return nil
 }
 
-func AddCommand(commands []*discordgo.ApplicationCommand, name string, description string, commandType discordgo.ApplicationCommandType) []*discordgo.ApplicationCommand {
-	commands = append(commands, NewApplicationCommand(name, description, commandType).ApplicationCommand)
+func AddOption(commandOptions []*discordgo.ApplicationCommandOption, name string, description string, optionType discordgo.ApplicationCommandOptionType, required bool) []*discordgo.ApplicationCommandOption {
+	commandOption := NewCommandOption(name, description, optionType, required)
 
-	return commands
+	commandOptions = append(commandOptions, commandOption.ApplicationCommandOption)
+
+	return commandOptions
 }

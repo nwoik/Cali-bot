@@ -37,6 +37,10 @@ func NewMessageApplicationCommand(name string, description string) *Command {
 		discordgo.MessageApplicationCommand)
 }
 
+func (command *Command) GetOptions() []*discordgo.ApplicationCommandOption {
+	return command.Options
+}
+
 func (command *Command) SetName(name string) *Command {
 	command.Name = name
 
@@ -67,10 +71,10 @@ func (command *Command) SetOptions(options []*discordgo.ApplicationCommandOption
 	return command
 }
 
-// func (command *Command) AddOption(name string, description string, optionType discordgo.ApplicationCommandOptionType, required bool) *Command {
-// 	commandOption := NewCommandOption(name, description, optionType, required)
+func (command *Command) AddOption(name string, description string, optionType discordgo.ApplicationCommandOptionType, required bool) *Command {
+	commandOption := NewCommandOption(name, description, optionType, required)
 
-// 	command.Options = append(command.Options, commandOption.ApplicationCommandOption)
+	command.Options = append(command.Options, commandOption.ApplicationCommandOption)
 
-// 	return command
-// }
+	return command
+}

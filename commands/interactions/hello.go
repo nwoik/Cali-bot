@@ -7,7 +7,8 @@ import (
 )
 
 func Hello(interaction *discordgo.InteractionCreate) *responses.Response {
-	data := responses.NewResponseData("Hello " + interaction.Member.User.Mention())
+	options := interaction.ApplicationCommandData().Options
+	data := responses.NewResponseData("Hello " + options[0].StringValue())
 	response := responses.NewMessageResponse(data.InteractionResponseData)
 
 	return response
