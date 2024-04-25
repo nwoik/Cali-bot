@@ -3,26 +3,46 @@ package interactions
 import (
 	responses "calibot/commands/responses"
 
-	clans "github.com/nwoik/calibotapi/clans"
+	m "github.com/nwoik/calibotapi/member"
 
 	"github.com/bwmarrin/discordgo"
 )
 
-func Register(interaction *discordgo.InteractionCreate) *responses.Response {
+type RegistrationStatus int
 
-	members := clans.NewMembers().Open("./resources/members.json")
+const (
+	Success           RegistrationStatus = 1
+	InvalidID         RegistrationStatus = 2
+	AlreadyRegistered RegistrationStatus = 3
+	Failure           RegistrationStatus = 4
+)
 
-	members = members.SetMembers(AddMember(members.GetMembers(), interaction))
+func Register(session *discordgo.Session, interaction *discordgo.InteractionCreate) *responses.Response {
 
-	members.Close("./resources/members.json")
+	members := m.Open("./resources/members.json")
 
-	response := responses.NewMessageResponse(successfulRegistrationResponse(interaction).InteractionResponseData)
+	var status RegistrationStatus
+	members, status = AddMember(members, interaction, session)
+	response := responses.NewMessageResponse(RegistrationResponse(interaction, status).InteractionResponseData)
+
+	m.Close("./resources/members.json", members)
 
 	return response
 }
 
-func successfulRegistrationResponse(interaction *discordgo.InteractionCreate) *responses.Data {
-	data := responses.NewResponseData("Registered" + interaction.Member.User.Mention())
+func RegistrationResponse(interaction *discordgo.InteractionCreate, status RegistrationStatus) *responses.Data {
+	var data *responses.Data
+
+	switch status {
+	case Success:
+		data = responses.NewResponseData("Registered" + interaction.Member.User.Mention())
+	case InvalidID:
+		data = responses.NewResponseData("Invalid Game-ID. Failed to register" + interaction.Member.User.Mention())
+	case AlreadyRegistered:
+		data = responses.NewResponseData("User is already registered. Details were updated")
+	case Failure:
+		data = responses.NewResponseData("Failed to register. Something went wrong")
+	}
 
 	return data
 }
