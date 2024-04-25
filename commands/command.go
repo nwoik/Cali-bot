@@ -12,7 +12,7 @@ func NewCommand() *Command {
 	return &Command{&discordgo.ApplicationCommand{}}
 }
 
-func NewApplicationCommand(name string, description string, commandType discordgo.ApplicationCommandType) *Command {
+func newApplicationCommand(name string, description string, commandType discordgo.ApplicationCommandType) *Command {
 	botCommand := NewCommand().
 		SetName(name).
 		SetDescription(description).
@@ -22,23 +22,19 @@ func NewApplicationCommand(name string, description string, commandType discordg
 }
 
 func NewChatApplicationCommand(name string, description string) *Command {
-	return NewApplicationCommand(name, description,
+	return newApplicationCommand(name, description,
 		discordgo.ChatApplicationCommand)
 }
 
 func NewUserApplicationCommand(name string, description string) *Command {
-	return NewApplicationCommand(name, description,
+	return newApplicationCommand(name, description,
 		discordgo.UserApplicationCommand)
 
 }
 
 func NewMessageApplicationCommand(name string, description string) *Command {
-	return NewApplicationCommand(name, description,
+	return newApplicationCommand(name, description,
 		discordgo.MessageApplicationCommand)
-}
-
-func (command *Command) GetOptions() []*discordgo.ApplicationCommandOption {
-	return command.Options
 }
 
 func (command *Command) SetName(name string) *Command {
@@ -67,14 +63,6 @@ func (command *Command) SetApplicationCommandType(commandType discordgo.Applicat
 
 func (command *Command) SetOptions(options []*discordgo.ApplicationCommandOption) *Command {
 	command.Options = options
-
-	return command
-}
-
-func (command *Command) AddOption(name string, description string, optionType discordgo.ApplicationCommandOptionType, required bool) *Command {
-	commandOption := NewCommandOption(name, description, optionType, required)
-
-	command.Options = append(command.Options, commandOption.ApplicationCommandOption)
 
 	return command
 }
