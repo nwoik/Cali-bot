@@ -22,7 +22,17 @@ func Register(session *discordgo.Session, interaction *discordgo.InteractionCrea
 	members := m.Open("./resources/members.json")
 
 	var status RegistrationStatus
-	members, status = AddMember(members, interaction, session)
+	members, status = AddMember(members, interaction)
+
+	// possibly for changing nicks
+	// parameters := discordgo.GuildMemberParams{}
+	// parameters.Nick = interaction.Member.Nick + " -> " + interaction.Member.User.ID
+
+	// _, err := session.GuildMemberEdit(interaction.GuildID, interaction.Member.User.ID, &parameters)
+	// if err != nil {
+	// 	fmt.Println("Error changing member nickname:", err)
+	// }
+
 	response := responses.NewMessageResponse(RegistrationResponse(interaction, status).InteractionResponseData)
 
 	m.Close("./resources/members.json", members)

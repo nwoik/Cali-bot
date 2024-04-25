@@ -1,19 +1,11 @@
-{
-    "clansList": [
-        {
-            "name": "Cali Cartel",
-            "clanid":"",
-            "guildid": "1225139432521465987",
-            "memberrole": "",
-            "leaderid": "",
-            "members": [
-                {
-                    "userid": "593475382498426927",
-                    "nick": "davidnwky",
-                    "ign": "nwoik",
-                    "igid": "314799766"
-                }
-            ]
-        }
-    ]
-}
+[
+    {
+        "name": "Cali Cartel",
+        "guildid": "701856425965649991",
+        "Roles": null,
+        "leaderid": "",
+        "clanid": "31028092",
+        "members": null,
+        "blacklist": null
+    }
+]

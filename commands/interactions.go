@@ -10,11 +10,12 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 	// Handle interaction type
 	if interaction.Type == discordgo.InteractionApplicationCommand {
 		switch cmd := interaction.ApplicationCommandData().Name; cmd {
-		case "hello":
-			response := interactions.Hello(interaction).InteractionResponse
-			_ = session.InteractionRespond(interaction.Interaction, response)
 		case "register":
 			response := interactions.Register(session, interaction).InteractionResponse
+			_ = session.InteractionRespond(interaction.Interaction, response)
+
+		case "registerclan":
+			response := interactions.RegisterClan(session, interaction).InteractionResponse
 			_ = session.InteractionRespond(interaction.Interaction, response)
 		}
 	}

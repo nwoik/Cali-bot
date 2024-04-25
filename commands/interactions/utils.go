@@ -2,6 +2,7 @@ package interactions
 
 import (
 	"github.com/bwmarrin/discordgo"
+	c "github.com/nwoik/calibotapi/clan"
 	m "github.com/nwoik/calibotapi/member"
 )
 
@@ -11,6 +12,16 @@ func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, n
 			return option
 		}
 	}
+	return nil
+}
+
+func GetClan(clans []*c.Clan, id string) *c.Clan {
+	for _, clan := range clans {
+		if clan.GuildID == id {
+			return clan
+		}
+	}
+
 	return nil
 }
 
@@ -24,32 +35,44 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 	return nil
 }
 
-func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate, session *discordgo.Session) ([]*m.Member, RegistrationStatus) {
+func AddClan(clans []*c.Clan, interaction *discordgo.InteractionCreate) ([]*c.Clan, RegistrationStatus) {
 	args := interaction.ApplicationCommandData().Options
-	gameid := GetArgument(args, "gameid")
-	ign := GetArgument(args, "ign")
+	name := GetArgument(args, "name").StringValue()
+	clanid := GetArgument(args, "clanid").StringValue()
 
-	if len(gameid.StringValue()) != 9 {
+	if len(clanid) != 8 {
+		return clans, InvalidID
+	}
+
+	clan := GetClan(clans, interaction.GuildID)
+	if clan == nil {
+		clan = c.CreateClan(name, clanid, interaction.GuildID)
+		clans = append(clans, clan)
+		return clans, Success
+	}
+	return clans, Failure
+}
+
+func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([]*m.Member, RegistrationStatus) {
+	args := interaction.ApplicationCommandData().Options
+	gameid := GetArgument(args, "gameid").StringValue()
+	ign := GetArgument(args, "ign").StringValue()
+
+	if len(gameid) != 9 {
 		return members, InvalidID
 	}
 
 	member := GetMember(members, interaction.Member.User.ID)
 
 	if member == nil {
-		// parameters := discordgo.GuildMemberParams{}
-		// parameters.Nick = interaction.Member.Nick + " -> " + interaction.Member.User.ID
-
-		// member, err := session.GuildMemberEdit(interaction.GuildID, interaction.Member.User.ID, &parameters)
-		// if err != nil {
-		// 	fmt.Println("Error changing member nickname:", err)
-		// 	return members, Failure
-		// }
-		members = append(members, m.CreateMember(interaction.Member.User.Username, ign.StringValue(), gameid.StringValue(), interaction.Member.User.ID))
+		member = m.CreateMember(interaction.Member.User.Username, ign, gameid, interaction.Member.User.ID)
+		members = append(members, member)
 		return members, Success
-	} else if member != nil {
-		member.IGN = ign.StringValue()
-		member.IGID = gameid.StringValue()
-		return members, AlreadyRegistered
 	}
-	return members, Failure
+
+	member.IGN = ign
+	member.IGID = gameid
+	return members, AlreadyRegistered
+
+	// return members, Failure
 }
