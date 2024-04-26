@@ -1,49 +1,14 @@
 package interactions
 
 import (
+	r "calibot/commands/responses"
+	e "calibot/embeds"
+	"fmt"
+
 	"github.com/bwmarrin/discordgo"
 	c "github.com/nwoik/calibotapi/clan"
 	m "github.com/nwoik/calibotapi/member"
 )
-
-func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, name string) *discordgo.ApplicationCommandInteractionDataOption {
-	for _, option := range options {
-		if option.Name == name {
-			return option
-		}
-	}
-	return nil
-}
-
-func GetClan(clans []*c.Clan, id string) *c.Clan {
-	for _, clan := range clans {
-		if clan.GuildID == id {
-			return clan
-		}
-	}
-
-	return nil
-}
-
-func GetClanByClanID(clans []*c.Clan, id string) *c.Clan {
-	for _, clan := range clans {
-		if clan.ClanID == id {
-			return clan
-		}
-	}
-
-	return nil
-}
-
-func GetMember(members []*m.Member, userid string) *m.Member {
-	for _, member := range members {
-		if member.UserID == userid {
-			return member
-		}
-	}
-
-	return nil
-}
 
 func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.InteractionCreate) ([]*c.Clan, RegistrationStatus) {
 	userid := interaction.Member.User.ID
@@ -94,4 +59,70 @@ func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([
 	return members, AlreadyRegistered
 
 	// return members, Failure
+}
+
+func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, name string) *discordgo.ApplicationCommandInteractionDataOption {
+	for _, option := range options {
+		if option.Name == name {
+			return option
+		}
+	}
+	return nil
+}
+
+func GetClan(clans []*c.Clan, id string) *c.Clan {
+	for _, clan := range clans {
+		if clan.GuildID == id {
+			return clan
+		}
+	}
+
+	return nil
+}
+
+func GetClanByClanID(clans []*c.Clan, id string) *c.Clan {
+	for _, clan := range clans {
+		if clan.ClanID == id {
+			return clan
+		}
+	}
+
+	return nil
+}
+
+func GetMember(members []*m.Member, userid string) *m.Member {
+	for _, member := range members {
+		if member.UserID == userid {
+			return member
+		}
+	}
+
+	return nil
+}
+
+func GetGuildMember(session *discordgo.Session, guildID string, memberID string) (*discordgo.Member, *r.Data) {
+	guildMember, err := session.GuildMember(guildID, memberID)
+	if err != nil {
+		fmt.Println("Error retrieving member information:", err)
+		return nil, r.NewResponseData("Error retrieving member information.")
+	}
+	return guildMember, nil
+}
+
+func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *discordgo.User) *e.Embed {
+	embed := e.NewRichEmbed(member.Nick, "User Info", 0x08d052c)
+	embed.SetThumbnail(guildMember.AvatarURL(""))
+
+	embed.AddField("**IGN: **", member.IGN, false)
+	embed.AddField("**ID: **", member.IGID, false)
+
+	if member.ClanID != "" {
+		clans := c.Open("./resources/clan.json")
+		clan := GetClanByClanID(clans, member.ClanID)
+		embed.AddField("**Clan: **", clan.Name, true)
+	}
+
+	embed.SetFooter(fmt.Sprintf("Requested by %s", discordUser.Username), discordUser.AvatarURL(""))
+
+	return embed
 }

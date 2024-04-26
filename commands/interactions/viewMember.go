@@ -2,11 +2,8 @@ package interactions
 
 import (
 	r "calibot/commands/responses"
-	e "calibot/embeds"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
 	m "github.com/nwoik/calibotapi/member"
 )
 
@@ -35,27 +32,17 @@ func EmbedResponse(session *discordgo.Session, interaction *discordgo.Interactio
 		data = r.NewResponseData("User is not registered with the bot.")
 	} else {
 		guildID := interaction.GuildID
-		memberID := interaction.Member.User.ID
+		interactionUser := interaction.Member.User
+		memberID := interactionUser.ID
 
 		// Get the member's information
-		user, err := session.GuildMember(guildID, memberID)
-		if err != nil {
-			fmt.Println("Error retrieving member information:", err)
+		guildMember, errdata := GetGuildMember(session, guildID, memberID)
+		if errdata != nil {
+			return errdata
 		}
 
-		embed := e.NewRichEmbed(member.Nick, "User Info", 0x08d052c)
-		embed.SetThumbnail(user.AvatarURL(""))
+		embed := MemberEmbed(member, guildMember, interactionUser)
 
-		embed.AddField("**IGN: **", member.IGN, false)
-		embed.AddField("**ID: **", member.IGID, false)
-
-		if member.ClanID != "" {
-			clans := c.Open("./resources/clan.json")
-			clan := GetClanByClanID(clans, member.ClanID)
-			embed.AddField("**Clan: **", clan.Name, true)
-		}
-
-		embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 		data = r.NewResponseData("").AddEmbed(embed)
 	}
 
