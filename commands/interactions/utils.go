@@ -76,11 +76,6 @@ func GetClan(clans []*c.Clan, id string) *c.Clan {
 			return clan
 		}
 	}
-
-	return nil
-}
-
-func GetClanByClanID(clans []*c.Clan, id string) *c.Clan {
 	for _, clan := range clans {
 		if clan.ClanID == id {
 			return clan
@@ -88,6 +83,18 @@ func GetClanByClanID(clans []*c.Clan, id string) *c.Clan {
 	}
 
 	return nil
+}
+
+func GetClanMembers(clan *c.Clan, members []*m.Member) []*m.Member {
+	clanMembers := make([]*m.Member, 0)
+
+	for _, member := range members {
+		if clan.ClanID == member.ClanID {
+			clanMembers = append(clanMembers, member)
+		}
+	}
+
+	return clanMembers
 }
 
 func GetMember(members []*m.Member, userid string) *m.Member {
@@ -99,6 +106,10 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 
 	return nil
 }
+
+// func GetGuild(session *discordgo.Session, guildID string) *discordgo.Guild {
+
+// }
 
 func GetGuildMember(session *discordgo.Session, guildID string, memberID string) (*discordgo.Member, *r.Data) {
 	guildMember, err := session.GuildMember(guildID, memberID)
@@ -118,11 +129,46 @@ func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *d
 
 	if member.ClanID != "" {
 		clans := c.Open("./resources/clan.json")
-		clan := GetClanByClanID(clans, member.ClanID)
+		clan := GetClan(clans, member.ClanID)
 		embed.AddField("**Clan: **", clan.Name, true)
 	}
 
 	embed.SetFooter(fmt.Sprintf("Requested by %s", discordUser.Username), discordUser.AvatarURL(""))
 
 	return embed
+}
+
+func PingUser(userid string) string {
+	return fmt.Sprintf("<@%s>", userid)
+}
+
+func PingRole(id string) string {
+	return fmt.Sprintf("<@&%s>", id)
+}
+
+func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member, role string) string {
+	var output string
+
+	for _, member := range members {
+		if isRole(session, member, clan, role) {
+			output += fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
+		}
+	}
+
+	if output == "" {
+		output = "None"
+	}
+
+	return output
+}
+
+func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {
+	guildMember, _ := GetGuildMember(session, clan.GuildID, member.UserID)
+
+	for _, role := range guildMember.Roles {
+		if role == clanRole {
+			return true
+		}
+	}
+	return false
 }
