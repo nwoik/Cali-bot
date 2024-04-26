@@ -34,7 +34,7 @@ func ClanRegistrationResponse(interaction *discordgo.InteractionCreate, status R
 	case AlreadyRegistered:
 		data = responses.NewResponseData("Clan is already registered. Details were updated")
 	case Failure:
-		data = responses.NewResponseData("Failed to register. Something went wrong")
+		data = responses.NewResponseData("Clan is already registered for this server.")
 	}
 
 	return data

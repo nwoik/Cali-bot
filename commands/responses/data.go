@@ -27,7 +27,7 @@ func (data *Data) SetContent(content string) *Data {
 	return data
 }
 
-func (data *Data) AddEmbed(embed embeds.Embed) *Data {
+func (data *Data) AddEmbed(embed *embeds.Embed) *Data {
 	embeds := make([]*discordgo.MessageEmbed, 0)
 
 	embeds = append(embeds, embed.MessageEmbed)

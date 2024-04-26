@@ -12,7 +12,7 @@ func NewCommand() *Command {
 	return &Command{&discordgo.ApplicationCommand{}}
 }
 
-func newApplicationCommand(name string, description string, commandType discordgo.ApplicationCommandType) *Command {
+func NewApplicationCommand(name string, description string, commandType discordgo.ApplicationCommandType) *Command {
 	botCommand := NewCommand().
 		SetName(name).
 		SetDescription(description).
@@ -22,18 +22,18 @@ func newApplicationCommand(name string, description string, commandType discordg
 }
 
 func NewChatApplicationCommand(name string, description string) *Command {
-	return newApplicationCommand(name, description,
+	return NewApplicationCommand(name, description,
 		discordgo.ChatApplicationCommand)
 }
 
 func NewUserApplicationCommand(name string, description string) *Command {
-	return newApplicationCommand(name, description,
+	return NewApplicationCommand(name, description,
 		discordgo.UserApplicationCommand)
 
 }
 
 func NewMessageApplicationCommand(name string, description string) *Command {
-	return newApplicationCommand(name, description,
+	return NewApplicationCommand(name, description,
 		discordgo.MessageApplicationCommand)
 }
 

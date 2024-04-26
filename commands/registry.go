@@ -12,13 +12,18 @@ func RegisterCommand(s *discordgo.Session) error {
 	register.Options = append(register.Options, NewCommandOption("ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	register.Options = append(register.Options, NewCommandOption("gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 
-	registerClan := NewChatApplicationCommand("registerclan", "Registers a clan with the bot")
+	registerClan := NewChatApplicationCommand("register-clan", "Registers a clan with the bot").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	registerClan.Options = append(registerClan.Options, NewCommandOption("name", "Your clan's name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	registerClan.Options = append(registerClan.Options, NewCommandOption("clanid", "Your clan's in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
+
+	viewMember := NewChatApplicationCommand("view-profile", "Leave  blank to see yourself or ping the person you want to view")
+	viewMember.Options = append(viewMember.Options, NewCommandOption("member", "User's @", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
 
 	// Add commands here
 	commands = append(commands, register.ApplicationCommand)
 	commands = append(commands, registerClan.ApplicationCommand)
+	commands = append(commands, viewMember.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
