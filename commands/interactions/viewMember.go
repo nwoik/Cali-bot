@@ -51,7 +51,7 @@ func EmbedResponse(session *discordgo.Session, interaction *discordgo.Interactio
 
 		if member.ClanID != "" {
 			clans := c.Open("./resources/clan.json")
-			clan := GetClan(clans, member.ClanID)
+			clan := GetClanByClanID(clans, member.ClanID)
 			embed.AddField("**Clan: **", clan.Name, true)
 		}
 

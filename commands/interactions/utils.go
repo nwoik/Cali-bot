@@ -25,6 +25,16 @@ func GetClan(clans []*c.Clan, id string) *c.Clan {
 	return nil
 }
 
+func GetClanByClanID(clans []*c.Clan, id string) *c.Clan {
+	for _, clan := range clans {
+		if clan.ClanID == id {
+			return clan
+		}
+	}
+
+	return nil
+}
+
 func GetMember(members []*m.Member, userid string) *m.Member {
 	for _, member := range members {
 		if member.UserID == userid {
@@ -35,7 +45,14 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 	return nil
 }
 
-func AddClan(clans []*c.Clan, interaction *discordgo.InteractionCreate) ([]*c.Clan, RegistrationStatus) {
+func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.InteractionCreate) ([]*c.Clan, RegistrationStatus) {
+	userid := interaction.Member.User.ID
+	member := GetMember(members, userid)
+
+	if member == nil {
+		return clans, UserNotRegistered
+	}
+
 	args := interaction.ApplicationCommandData().Options
 	name := GetArgument(args, "name").StringValue()
 	clanid := GetArgument(args, "clanid").StringValue()
@@ -46,8 +63,10 @@ func AddClan(clans []*c.Clan, interaction *discordgo.InteractionCreate) ([]*c.Cl
 
 	clan := GetClan(clans, interaction.GuildID)
 	if clan == nil {
-		clan = c.CreateClan(name, clanid, interaction.GuildID)
+		clan = c.CreateClan(name, clanid, interaction.GuildID).
+			SetLeaderID(userid)
 		clans = append(clans, clan)
+		member.ClanID = clanid
 		return clans, Success
 	}
 	return clans, Failure

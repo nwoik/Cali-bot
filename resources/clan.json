@@ -1,11 +1,9 @@
 [
     {
-        "name": "my clan",
+        "name": "Cali Cartel",
         "guildid": "701856425965649991",
-        "Roles": [
-            "1230600213442461857"
-        ],
-        "leaderid": "",
+        "Roles": null,
+        "leaderid": "593475382498426927",
         "clanid": "31028092",
         "blacklist": null
     }

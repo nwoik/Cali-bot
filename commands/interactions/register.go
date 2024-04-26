@@ -15,6 +15,7 @@ const (
 	InvalidID         RegistrationStatus = 2
 	AlreadyRegistered RegistrationStatus = 3
 	Failure           RegistrationStatus = 4
+	UserNotRegistered RegistrationStatus = 5
 )
 
 func Register(session *discordgo.Session, interaction *discordgo.InteractionCreate) *responses.Response {

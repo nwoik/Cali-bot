@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/bwmarrin/discordgo v0.28.1
-	github.com/nwoik/calibotapi v0.0.0-20240425192651-bbb34ee77fc3
+	github.com/nwoik/calibotapi v0.0.0-20240426071409-bc6e6064b0eb
 )
 
 require (
