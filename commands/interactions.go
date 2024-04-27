@@ -16,9 +16,15 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 		case "register-clan":
 			response = interactions.RegisterClan(session, interaction).InteractionResponse
 		case "view-profile":
-			response = interactions.ViewMember(session, interaction).InteractionResponse
+			response = interactions.ViewProfile(session, interaction).InteractionResponse
 		case "view-clan":
 			response = interactions.ViewClan(session, interaction).InteractionResponse
+		case "member-role":
+			response = interactions.MemberRole(session, interaction).InteractionResponse
+		case "officer-role":
+			response = interactions.OfficerRole(session, interaction).InteractionResponse
+		case "leader-role":
+			response = interactions.LeaderRole(session, interaction).InteractionResponse
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)

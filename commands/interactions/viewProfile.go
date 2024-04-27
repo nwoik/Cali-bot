@@ -7,7 +7,7 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-func ViewMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
+func ViewProfile(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	members := m.Open("./resources/members.json")
 
 	args := interaction.ApplicationCommandData().Options

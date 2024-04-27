@@ -143,6 +143,9 @@ func PingUser(userid string) string {
 }
 
 func PingRole(id string) string {
+	if len(id) < 10 {
+		return ""
+	}
 	return fmt.Sprintf("<@&%s>", id)
 }
 
