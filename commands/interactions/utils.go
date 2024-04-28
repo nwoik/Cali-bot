@@ -61,6 +61,19 @@ func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([
 	// return members, Failure
 }
 
+func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, AcceptionStatus) {
+	args := interaction.ApplicationCommandData().Options
+	user := GetArgument(args, "user").UserValue(session)
+	member := GetMember(members, user.ID)
+
+	if clan.ClanID != member.ClanID {
+		member.ClanID = clan.ClanID
+		return members, Accepted
+	}
+
+	return members, AlreadyAccepted
+}
+
 func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, name string) *discordgo.ApplicationCommandInteractionDataOption {
 	for _, option := range options {
 		if option.Name == name {

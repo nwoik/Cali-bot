@@ -25,6 +25,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.OfficerRole(session, interaction).InteractionResponse
 		case "leader-role":
 			response = interactions.LeaderRole(session, interaction).InteractionResponse
+		case "accept":
+			response = interactions.Accept(session, interaction).InteractionResponse
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)

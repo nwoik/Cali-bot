@@ -23,14 +23,21 @@ func RegisterCommand(s *discordgo.Session) error {
 	viewClan := NewChatApplicationCommand("view-clan", "Leave clanid blank to see the clan for the server you're in")
 	viewClan.Options = append(viewClan.Options, NewCommandOption("clanid", "In-game id of a clan", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
 
-	memberRole := NewChatApplicationCommand("member-role", "Register the role you want your members to have")
+	memberRole := NewChatApplicationCommand("member-role", "Register the role you want your members to have").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	memberRole.Options = append(memberRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
-	officerRole := NewChatApplicationCommand("officer-role", "Register the role you want your officers to have")
+	officerRole := NewChatApplicationCommand("officer-role", "Register the role you want your officers to have").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	officerRole.Options = append(officerRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
-	leaderRole := NewChatApplicationCommand("leader-role", "Register the role for the clan leader")
+	leaderRole := NewChatApplicationCommand("leader-role", "Register the role for the clan leader").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	leaderRole.Options = append(leaderRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
+
+	accept := NewChatApplicationCommand("accept", "Add a user to the clan").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
+	accept.Options = append(accept.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	// Add commands here
 	commands = append(commands, register.ApplicationCommand)
@@ -40,6 +47,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	commands = append(commands, memberRole.ApplicationCommand)
 	commands = append(commands, officerRole.ApplicationCommand)
 	commands = append(commands, leaderRole.ApplicationCommand)
+	commands = append(commands, accept.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
