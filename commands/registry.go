@@ -4,10 +4,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var globalCommands []*discordgo.ApplicationCommand = make([]*discordgo.ApplicationCommand, 0)
+
 func RegisterCommand(s *discordgo.Session) error {
-
-	commands := make([]*discordgo.ApplicationCommand, 0)
-
 	register := NewChatApplicationCommand("register", "Registers a user with the bot")
 	register.Options = append(register.Options, NewCommandOption("ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	register.Options = append(register.Options, NewCommandOption("gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
@@ -47,20 +46,23 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
 	blacklist.Options = append(blacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
+	help := NewChatApplicationCommand("help", "Lists the bot's commands")
+
 	// Add commands here
-	commands = append(commands, register.ApplicationCommand)
-	commands = append(commands, registerClan.ApplicationCommand)
-	commands = append(commands, viewMember.ApplicationCommand)
-	commands = append(commands, viewClan.ApplicationCommand)
-	commands = append(commands, memberRole.ApplicationCommand)
-	commands = append(commands, officerRole.ApplicationCommand)
-	commands = append(commands, leaderRole.ApplicationCommand)
-	commands = append(commands, accept.ApplicationCommand)
-	commands = append(commands, remove.ApplicationCommand)
-	commands = append(commands, blacklist.ApplicationCommand)
+	globalCommands = append(globalCommands, help.ApplicationCommand)
+	globalCommands = append(globalCommands, register.ApplicationCommand)
+	globalCommands = append(globalCommands, registerClan.ApplicationCommand)
+	globalCommands = append(globalCommands, viewMember.ApplicationCommand)
+	globalCommands = append(globalCommands, viewClan.ApplicationCommand)
+	globalCommands = append(globalCommands, memberRole.ApplicationCommand)
+	globalCommands = append(globalCommands, officerRole.ApplicationCommand)
+	globalCommands = append(globalCommands, leaderRole.ApplicationCommand)
+	globalCommands = append(globalCommands, accept.ApplicationCommand)
+	globalCommands = append(globalCommands, remove.ApplicationCommand)
+	globalCommands = append(globalCommands, blacklist.ApplicationCommand)
 
 	// Register the command globally
-	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
+	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", globalCommands)
 	if err != nil {
 		return err
 	}

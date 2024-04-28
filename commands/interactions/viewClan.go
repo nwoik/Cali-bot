@@ -37,7 +37,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed := e.NewRichEmbed(fmt.Sprintf("**%s**", clan.Name), "", 0xffd700)
 
 	guildID := interaction.GuildID
-	guild, _ := session.Guild(guildID)
+	guild := GetGuild(session, guildID)
 
 	embed.SetThumbnail(guild.IconURL(""))
 	embed.AddField("", fmt.Sprintf("**Leader: **%s", PingRole(clan.LeaderRole)), false)
@@ -47,6 +47,8 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.AddField("", fmt.Sprintf("**Members: **%s", PingRole(clan.MemberRole)), false)
 	embed.AddField("", PrintMembers(session, clan, members, clan.MemberRole), false)
 	embed.AddField("Blacklist", PrintBlacklist(clan), false)
+
+	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.User.Username), interaction.User.AvatarURL(""))
 
 	data = r.NewResponseData("").AddEmbed(embed)
 

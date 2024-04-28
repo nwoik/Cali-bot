@@ -138,9 +138,10 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 	return nil
 }
 
-// func GetGuild(session *discordgo.Session, guildID string) *discordgo.Guild {
-
-// }
+func GetGuild(session *discordgo.Session, guildID string) *discordgo.Guild {
+	guild, _ := session.Guild(guildID)
+	return guild
+}
 
 func GetGuildMember(session *discordgo.Session, guildID string, memberID string) (*discordgo.Member, *r.Data) {
 	guildMember, err := session.GuildMember(guildID, memberID)

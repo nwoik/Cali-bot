@@ -11,6 +11,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 	// Handle interaction type
 	if interaction.Type == discordgo.InteractionApplicationCommand {
 		switch cmd := interaction.ApplicationCommandData().Name; cmd {
+		case "help":
+			response = interactions.Help(session, interaction, globalCommands).InteractionResponse
 		case "register":
 			response = interactions.Register(session, interaction).InteractionResponse
 		case "register-clan":
