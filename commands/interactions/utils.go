@@ -66,12 +66,19 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 	user := GetArgument(args, "user").UserValue(session)
 	member := GetMember(members, user.ID)
 
-	if clan.ClanID != member.ClanID {
-		member.ClanID = clan.ClanID
-		return members, Accepted
+	if member != nil {
+		if clan.ClanID != member.ClanID {
+			if !isBlacklisted(clan, member.UserID) {
+				member.ClanID = clan.ClanID
+				return members, Accepted
+			}
+			return members, Blacklisted
+		}
+
+		return members, AlreadyAccepted
 	}
 
-	return members, AlreadyAccepted
+	return members, NotRegistered
 }
 
 func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, name string) *discordgo.ApplicationCommandInteractionDataOption {
@@ -118,6 +125,16 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 	}
 
 	return nil
+}
+
+func isBlacklisted(clan *c.Clan, userid string) bool {
+	for _, id := range clan.Blacklist {
+		if id == userid {
+			return true
+		}
+	}
+
+	return false
 }
 
 // func GetGuild(session *discordgo.Session, guildID string) *discordgo.Guild {

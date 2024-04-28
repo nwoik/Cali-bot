@@ -14,7 +14,8 @@ type AcceptionStatus int
 const (
 	Accepted        AcceptionStatus = 1
 	AlreadyAccepted AcceptionStatus = 2
-	Failed          AcceptionStatus = 3
+	Blacklisted     AcceptionStatus = 3
+	NotRegistered   AcceptionStatus = 4
 )
 
 func Accept(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
@@ -53,9 +54,11 @@ func AcceptionResponse(interaction *discordgo.InteractionCreate, user *discordgo
 	case Accepted:
 		data = r.NewResponseData(fmt.Sprintf("%s has been added to the clan", user.Mention()))
 	case AlreadyAccepted:
-		data = r.NewResponseData("User is in the clan.")
-	case Failed:
-		data = r.NewResponseData("Failed. Something went wrong")
+		data = r.NewResponseData("User is already in the clan.")
+	case Blacklisted:
+		data = r.NewResponseData("User is blacklisted and cannot be accepted into clan")
+	case NotRegistered:
+		data = r.NewResponseData("User is not registered with the bot. User `/register`")
 	}
 
 	return data
