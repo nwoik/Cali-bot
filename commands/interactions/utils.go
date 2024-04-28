@@ -72,13 +72,24 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 				member.ClanID = clan.ClanID
 				return members, Accepted
 			}
-			return members, Blacklisted
+			return members, BlacklistedUser
 		}
 
 		return members, AlreadyAccepted
 	}
 
 	return members, NotRegistered
+}
+
+func BlacklistUser(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, BlacklistStatus) {
+	args := interaction.ApplicationCommandData().Options
+	user := GetArgument(args, "user").UserValue(session)
+
+	if !isBlacklisted(clan, user.ID) {
+		clan.Blacklist = append(clan.Blacklist, user.ID)
+		return clan, Blacklisted
+	}
+	return clan, AlreadyBlacklisted
 }
 
 func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, name string) *discordgo.ApplicationCommandInteractionDataOption {
@@ -167,6 +178,20 @@ func PingRole(id string) string {
 		return ""
 	}
 	return fmt.Sprintf("<@&%s>", id)
+}
+
+func PrintBlacklist(clan *c.Clan) string {
+	var output string
+
+	for _, id := range clan.Blacklist {
+		output += PingUser(id) + "\n"
+	}
+
+	if output == "" {
+		output = "None"
+	}
+
+	return output
 }
 
 func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member, role string) string {

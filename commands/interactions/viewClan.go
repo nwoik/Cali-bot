@@ -46,6 +46,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.AddField("", PrintMembers(session, clan, members, clan.OfficerRole), false)
 	embed.AddField("", fmt.Sprintf("**Members: **%s", PingRole(clan.MemberRole)), false)
 	embed.AddField("", PrintMembers(session, clan, members, clan.MemberRole), false)
+	embed.AddField("Blacklist", PrintBlacklist(clan), false)
 
 	data = r.NewResponseData("").AddEmbed(embed)
 

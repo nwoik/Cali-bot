@@ -43,6 +43,10 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
 	remove.Options = append(remove.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
+	blacklist := NewChatApplicationCommand("blacklist-member", "Blacklist a user from the clan").
+		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+	blacklist.Options = append(blacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
+
 	// Add commands here
 	commands = append(commands, register.ApplicationCommand)
 	commands = append(commands, registerClan.ApplicationCommand)
@@ -53,6 +57,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	commands = append(commands, leaderRole.ApplicationCommand)
 	commands = append(commands, accept.ApplicationCommand)
 	commands = append(commands, remove.ApplicationCommand)
+	commands = append(commands, blacklist.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)

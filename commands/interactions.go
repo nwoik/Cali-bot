@@ -29,6 +29,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.AcceptMember(session, interaction).InteractionResponse
 		case "remove-member":
 			response = interactions.RemoveMember(session, interaction).InteractionResponse
+		case "blacklist-member":
+			response = interactions.Blacklist(session, interaction).InteractionResponse
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)
