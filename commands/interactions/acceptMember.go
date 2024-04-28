@@ -18,7 +18,7 @@ const (
 	NotRegistered   AcceptionStatus = 4
 )
 
-func Accept(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
+func AcceptMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 	clan := GetClan(clans, interaction.GuildID)

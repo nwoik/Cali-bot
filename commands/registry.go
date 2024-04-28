@@ -35,7 +35,7 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	leaderRole.Options = append(leaderRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
-	accept := NewChatApplicationCommand("accept", "Add a user to the clan").
+	accept := NewChatApplicationCommand("accept-member", "Add a user to the clan").
 		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	accept.Options = append(accept.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
