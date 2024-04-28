@@ -36,8 +36,12 @@ func RegisterCommand(s *discordgo.Session) error {
 	leaderRole.Options = append(leaderRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
 	accept := NewChatApplicationCommand("accept-member", "Add a user to the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
+		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
 	accept.Options = append(accept.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
+
+	remove := NewChatApplicationCommand("remove-member", "Removes a user from the clan").
+		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+	remove.Options = append(remove.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	// Add commands here
 	commands = append(commands, register.ApplicationCommand)
@@ -48,6 +52,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	commands = append(commands, officerRole.ApplicationCommand)
 	commands = append(commands, leaderRole.ApplicationCommand)
 	commands = append(commands, accept.ApplicationCommand)
+	commands = append(commands, remove.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", commands)
