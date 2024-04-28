@@ -127,16 +127,6 @@ func GetMember(members []*m.Member, userid string) *m.Member {
 	return nil
 }
 
-func isBlacklisted(clan *c.Clan, userid string) bool {
-	for _, id := range clan.Blacklist {
-		if id == userid {
-			return true
-		}
-	}
-
-	return false
-}
-
 // func GetGuild(session *discordgo.Session, guildID string) *discordgo.Guild {
 
 // }
@@ -195,6 +185,18 @@ func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member,
 	return output
 }
 
+func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, RemovalStatus) {
+	args := interaction.ApplicationCommandData().Options
+	user := GetArgument(args, "user").UserValue(session)
+	member := GetMember(members, user.ID)
+
+	if clan.ClanID == member.ClanID {
+		member.ClanID = ""
+		return members, Removed
+	}
+	return members, MemberNotPresent
+}
+
 func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {
 	guildMember, _ := GetGuildMember(session, clan.GuildID, member.UserID)
 
@@ -203,5 +205,15 @@ func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole
 			return true
 		}
 	}
+	return false
+}
+
+func isBlacklisted(clan *c.Clan, userid string) bool {
+	for _, id := range clan.Blacklist {
+		if id == userid {
+			return true
+		}
+	}
+
 	return false
 }

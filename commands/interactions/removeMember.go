@@ -45,18 +45,6 @@ func RemoveMember(session *discordgo.Session, interaction *discordgo.Interaction
 	return response
 }
 
-func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, RemovalStatus) {
-	args := interaction.ApplicationCommandData().Options
-	user := GetArgument(args, "user").UserValue(session)
-	member := GetMember(members, user.ID)
-
-	if clan.ClanID == member.ClanID {
-		member.ClanID = ""
-		return members, Removed
-	}
-	return members, MemberNotPresent
-}
-
 func RemoveMemberResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status RemovalStatus) *r.Data {
 	var data *r.Data
 
