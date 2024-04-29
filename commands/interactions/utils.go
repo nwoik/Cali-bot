@@ -223,6 +223,21 @@ func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Sess
 	return members, MemberNotPresent
 }
 
+func RemoveFromBlacklist(slice []string, value string) []string {
+	index := -1
+	for i, v := range slice {
+		if v == value {
+			index = i
+			break
+		}
+	}
+
+	if index != -1 {
+		return append(slice[:index], slice[index+1:]...)
+	}
+	return slice
+}
+
 func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {
 	guildMember, _ := GetGuildMember(session, clan.GuildID, member.UserID)
 

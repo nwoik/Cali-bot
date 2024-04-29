@@ -48,7 +48,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.AddField("", PrintMembers(session, clan, members, clan.MemberRole), false)
 	embed.AddField("Blacklist", PrintBlacklist(clan), false)
 
-	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.User.Username), interaction.User.AvatarURL(""))
+	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
 	data = r.NewResponseData("").AddEmbed(embed)
 
