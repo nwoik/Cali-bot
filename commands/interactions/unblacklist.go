@@ -10,6 +10,9 @@ import (
 func Unblacklist(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	clan := GetClan(clans, interaction.GuildID)
+	if clan == nil {
+		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	}
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)

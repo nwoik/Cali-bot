@@ -13,6 +13,9 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 	clan := GetClan(clans, interaction.GuildID)
+	if clan == nil {
+		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	}
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)

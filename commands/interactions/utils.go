@@ -22,7 +22,7 @@ func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.Intera
 	name := GetArgument(args, "name").StringValue()
 	clanid := GetArgument(args, "clanid").StringValue()
 
-	if len(clanid) != 8 {
+	if len(clanid) < 7 {
 		return clans, InvalidID
 	}
 
@@ -42,7 +42,7 @@ func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([
 	gameid := GetArgument(args, "gameid").StringValue()
 	ign := GetArgument(args, "ign").StringValue()
 
-	if len(gameid) != 9 {
+	if len(gameid) < 7 {
 		return members, InvalidID
 	}
 
