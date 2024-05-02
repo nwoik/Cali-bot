@@ -44,7 +44,7 @@ func RemoveMemberResponse(interaction *discordgo.InteractionCreate, user *discor
 	switch status {
 	case Removed:
 		data = r.NewResponseData(fmt.Sprintf("%s has been removed from the clan", user.Mention()))
-	case MemberNotPresent:
+	case NotFound:
 		data = r.NewResponseData("This user isn't in the clan.")
 	}
 

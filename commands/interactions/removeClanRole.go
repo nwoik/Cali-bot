@@ -15,7 +15,7 @@ func RemoveClanRole(session *discordgo.Session, interaction *discordgo.Interacti
 	role := GetArgument(args, "role").RoleValue(session, clan.GuildID)
 
 	var status Status
-	clan.ExtraRoles = Remove(clan.ExtraRoles, role.ID)
+	clan.ExtraRoles, status = Remove(clan.ExtraRoles, role.ID)
 
 	response := r.NewMessageResponse(RoleRemovalResponse(status).InteractionResponseData)
 
@@ -28,9 +28,9 @@ func RoleRemovalResponse(status Status) *r.Data {
 	var data *r.Data
 
 	switch status {
-	case RoleRemoved:
+	case Removed:
 		data = r.NewResponseData("Role has been removed from clan's extra roles")
-	case RoleNotFound:
+	case NotFound:
 		data = r.NewResponseData("Role not found")
 	}
 
