@@ -247,7 +247,7 @@ func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Sess
 	return members, MemberNotPresent
 }
 
-func RemoveFromBlacklist(slice []string, value string) []string {
+func Remove(slice []string, value string) []string {
 	index := -1
 	for i, v := range slice {
 		if v == value {
