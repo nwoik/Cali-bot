@@ -85,6 +85,16 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 	return members, NotRegistered
 }
 
+func AddExtraRole(roles []string, id string) ([]string, RoleAddingStatus) {
+	for _, roleid := range roles {
+		if roleid == id {
+			return roles, AlreadyAdded
+		}
+	}
+	roles = append(roles, id)
+	return roles, RoleAdded
+}
+
 func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member, role string) {
 	err := session.GuildMemberRoleAdd(interaction.GuildID, member.UserID, role)
 	if err != nil {

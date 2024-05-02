@@ -35,6 +35,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.Blacklist(session, interaction).InteractionResponse
 		case "unblacklist-member":
 			response = interactions.Unblacklist(session, interaction).InteractionResponse
+		case "add-clan-role":
+			response = interactions.AddClanRole(session, interaction).InteractionResponse
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)

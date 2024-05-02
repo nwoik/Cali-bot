@@ -50,6 +50,10 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	unblacklist.Options = append(unblacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
+	addClanRole := NewChatApplicationCommand("add-clan-role", "Adds an extra role you want members to be assigned").
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
+	addClanRole.Options = append(addClanRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
+
 	help := NewChatApplicationCommand("help", "Lists the bot's commands")
 
 	// Add commands here
@@ -65,6 +69,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	globalCommands = append(globalCommands, remove.ApplicationCommand)
 	globalCommands = append(globalCommands, blacklist.ApplicationCommand)
 	globalCommands = append(globalCommands, unblacklist.ApplicationCommand)
+	globalCommands = append(globalCommands, addClanRole.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", globalCommands)
