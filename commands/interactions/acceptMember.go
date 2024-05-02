@@ -27,15 +27,6 @@ func AcceptMember(session *discordgo.Session, interaction *discordgo.Interaction
 
 	members, status = AddClanMember(clan, members, session, interaction)
 
-	// possibly for changing nicks
-	// parameters := discordgo.GuildMemberParams{}
-	// parameters.Nick = interaction.Member.Nick + " -> " + interaction.Member.User.ID
-
-	// _, err := session.GuildMemberEdit(interaction.GuildID, interaction.Member.User.ID, &parameters)
-	// if err != nil {
-	// 	fmt.Println("Error changing member nickname:", err)
-	// }
-
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 

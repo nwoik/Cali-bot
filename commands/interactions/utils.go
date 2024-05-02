@@ -70,6 +70,10 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 		if clan.ClanID != member.ClanID {
 			if !isBlacklisted(clan, member.UserID) {
 				member.ClanID = clan.ClanID
+				AddRole(session, interaction, member, clan.MemberRole)
+				for _, role := range clan.ExtraRoles {
+					AddRole(session, interaction, member, role)
+				}
 				return members, Accepted
 			}
 			return members, BlacklistedUser
@@ -79,6 +83,13 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 	}
 
 	return members, NotRegistered
+}
+
+func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member, role string) {
+	err := session.GuildMemberRoleAdd(interaction.GuildID, member.UserID, role)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("Error changing member role: %s", role), err)
+	}
 }
 
 func BlacklistUser(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, BlacklistStatus) {
@@ -218,6 +229,9 @@ func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Sess
 
 	if clan.ClanID == member.ClanID {
 		member.ClanID = ""
+
+		guildMember, _ := GetGuildMember(session, interaction.GuildID, member.UserID)
+		RemoveRoles(session, interaction, guildMember)
 		return members, Removed
 	}
 	return members, MemberNotPresent
@@ -236,6 +250,15 @@ func RemoveFromBlacklist(slice []string, value string) []string {
 		return append(slice[:index], slice[index+1:]...)
 	}
 	return slice
+}
+
+func RemoveRoles(session *discordgo.Session, interaction *discordgo.InteractionCreate, guildMember *discordgo.Member) {
+	for _, roleID := range guildMember.Roles {
+		err := session.GuildMemberRoleRemove(interaction.GuildID, guildMember.User.ID, roleID)
+		if err != nil {
+			fmt.Println("Error removing role from member: ", err)
+		}
+	}
 }
 
 func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {

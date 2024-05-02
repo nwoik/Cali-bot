@@ -35,19 +35,19 @@ func RegisterCommand(s *discordgo.Session) error {
 	leaderRole.Options = append(leaderRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
 	accept := NewChatApplicationCommand("accept-member", "Add a user to the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	accept.Options = append(accept.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	remove := NewChatApplicationCommand("remove-member", "Removes a user from the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	remove.Options = append(remove.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	blacklist := NewChatApplicationCommand("blacklist-member", "Blacklist a user from the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	blacklist.Options = append(blacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	unblacklist := NewChatApplicationCommand("unblacklist-member", "Removes a user from the clan blacklist").
-		SetDefaultMemberPermissions(discordgo.PermissionManageMessages)
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	unblacklist.Options = append(unblacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	help := NewChatApplicationCommand("help", "Lists the bot's commands")
