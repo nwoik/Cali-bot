@@ -9,7 +9,7 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-func Appoint(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
+func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 	clan := GetClan(clans, interaction.GuildID)

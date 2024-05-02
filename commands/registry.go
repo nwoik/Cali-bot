@@ -58,7 +58,7 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	removeClanRole.Options = append(removeClanRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
-	appoint := NewChatApplicationCommand("appoint", "Appoints an officer for the clan").
+	appoint := NewChatApplicationCommand("promote", "Promotes a member to officer for the clan").
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	appoint.Options = append(appoint.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
