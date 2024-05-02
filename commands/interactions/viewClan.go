@@ -34,12 +34,13 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 
 func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member) *r.Data {
 	var data *r.Data
-	embed := e.NewRichEmbed(fmt.Sprintf("**%s**", clan.Name), "", 0xffd700)
+	embed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(GetClanMembers(clan, members))), "", 0xffd700)
 
 	guildID := interaction.GuildID
 	guild := GetGuild(session, guildID)
 
 	embed.SetThumbnail(guild.IconURL(""))
+	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
 	embed.AddField("", fmt.Sprintf("**Leader: **%s", PingRole(clan.LeaderRole)), false)
 	embed.AddField("", PrintMembers(session, clan, members, clan.LeaderRole), false)
 	embed.AddField("", fmt.Sprintf("**Officers: **%s", PingRole(clan.OfficerRole)), false)

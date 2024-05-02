@@ -232,6 +232,20 @@ func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member,
 	return output
 }
 
+func PrintExtraRoles(clan *c.Clan) string {
+	var output string
+
+	for _, id := range clan.ExtraRoles {
+		output += PingRole(id) + " "
+	}
+
+	if output == "" {
+		output = "None"
+	}
+
+	return output
+}
+
 func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, Status) {
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
