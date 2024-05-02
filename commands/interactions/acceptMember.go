@@ -9,21 +9,12 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-type AcceptionStatus int
-
-const (
-	Accepted        AcceptionStatus = 1
-	AlreadyAccepted AcceptionStatus = 2
-	BlacklistedUser AcceptionStatus = 3
-	NotRegistered   AcceptionStatus = 4
-)
-
 func AcceptMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 	clan := GetClan(clans, interaction.GuildID)
 
-	var status AcceptionStatus
+	var status Status
 
 	members, status = AddClanMember(clan, members, session, interaction)
 
@@ -38,7 +29,7 @@ func AcceptMember(session *discordgo.Session, interaction *discordgo.Interaction
 	return response
 }
 
-func AcceptionResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status AcceptionStatus) *r.Data {
+func AcceptionResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status Status) *r.Data {
 	var data *r.Data
 
 	switch status {

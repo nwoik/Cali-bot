@@ -9,19 +9,12 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-type BlacklistStatus int
-
-const (
-	Blacklisted        BlacklistStatus = 1
-	AlreadyBlacklisted BlacklistStatus = 2
-)
-
 func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	members := m.Open("./resources/members.json")
 	clans := c.Open("./resources/clan.json")
 	clan := GetClan(clans, interaction.GuildID)
 
-	var status BlacklistStatus
+	var status Status
 	clan, status = BlacklistUser(clan, members, session, interaction)
 
 	args := interaction.ApplicationCommandData().Options
@@ -40,7 +33,7 @@ func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCre
 	return response
 }
 
-func BlacklistResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status BlacklistStatus) *r.Data {
+func BlacklistResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status Status) *r.Data {
 	var data *r.Data
 
 	switch status {

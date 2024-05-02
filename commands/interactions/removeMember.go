@@ -9,19 +9,12 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-type RemovalStatus int
-
-const (
-	Removed          RemovalStatus = 1
-	MemberNotPresent RemovalStatus = 2
-)
-
 func RemoveMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 	clan := GetClan(clans, interaction.GuildID)
 
-	var status RemovalStatus
+	var status Status
 
 	members, status = RemoveClanMember(clan, members, session, interaction)
 
@@ -45,7 +38,7 @@ func RemoveMember(session *discordgo.Session, interaction *discordgo.Interaction
 	return response
 }
 
-func RemoveMemberResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status RemovalStatus) *r.Data {
+func RemoveMemberResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status Status) *r.Data {
 	var data *r.Data
 
 	switch status {

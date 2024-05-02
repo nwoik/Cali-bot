@@ -10,7 +10,7 @@ import (
 	m "github.com/nwoik/calibotapi/member"
 )
 
-func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.InteractionCreate) ([]*c.Clan, RegistrationStatus) {
+func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.InteractionCreate) ([]*c.Clan, Status) {
 	userid := interaction.Member.User.ID
 	member := GetMember(members, userid)
 
@@ -37,7 +37,7 @@ func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.Intera
 	return clans, Failure
 }
 
-func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([]*m.Member, RegistrationStatus) {
+func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([]*m.Member, Status) {
 	args := interaction.ApplicationCommandData().Options
 	gameid := GetArgument(args, "gameid").StringValue()
 	ign := GetArgument(args, "ign").StringValue()
@@ -61,7 +61,7 @@ func AddMember(members []*m.Member, interaction *discordgo.InteractionCreate) ([
 	// return members, Failure
 }
 
-func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, AcceptionStatus) {
+func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, Status) {
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 	member := GetMember(members, user.ID)
@@ -85,7 +85,7 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 	return members, NotRegistered
 }
 
-func AddExtraRole(roles []string, id string) ([]string, RoleAddingStatus) {
+func AddExtraRole(roles []string, id string) ([]string, Status) {
 	for _, roleid := range roles {
 		if roleid == id {
 			return roles, AlreadyAdded
@@ -102,7 +102,7 @@ func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	}
 }
 
-func BlacklistUser(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, BlacklistStatus) {
+func BlacklistUser(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, Status) {
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 
@@ -232,7 +232,7 @@ func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member,
 	return output
 }
 
-func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, RemovalStatus) {
+func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) ([]*m.Member, Status) {
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 	member := GetMember(members, user.ID)

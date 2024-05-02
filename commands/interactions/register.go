@@ -8,21 +8,11 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-type RegistrationStatus int
-
-const (
-	Success           RegistrationStatus = 1
-	InvalidID         RegistrationStatus = 2
-	AlreadyRegistered RegistrationStatus = 3
-	Failure           RegistrationStatus = 4
-	UserNotRegistered RegistrationStatus = 5
-)
-
 func Register(session *discordgo.Session, interaction *discordgo.InteractionCreate) *responses.Response {
 
 	members := m.Open("./resources/members.json")
 
-	var status RegistrationStatus
+	var status Status
 	members, status = AddMember(members, interaction)
 
 	// possibly for changing nicks
@@ -41,7 +31,7 @@ func Register(session *discordgo.Session, interaction *discordgo.InteractionCrea
 	return response
 }
 
-func RegistrationResponse(interaction *discordgo.InteractionCreate, status RegistrationStatus) *responses.Data {
+func RegistrationResponse(interaction *discordgo.InteractionCreate, status Status) *responses.Data {
 	var data *responses.Data
 
 	switch status {

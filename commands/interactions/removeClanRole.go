@@ -7,13 +7,6 @@ import (
 	c "github.com/nwoik/calibotapi/clan"
 )
 
-type RoleRemovingStatus int
-
-const (
-	RoleRemoved  RoleRemovingStatus = 1
-	RoleNotFound RoleRemovingStatus = 2
-)
-
 func RemoveClanRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	clan := GetClan(clans, interaction.GuildID)
@@ -21,7 +14,7 @@ func RemoveClanRole(session *discordgo.Session, interaction *discordgo.Interacti
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, clan.GuildID)
 
-	var status RoleRemovingStatus
+	var status Status
 	clan.ExtraRoles = Remove(clan.ExtraRoles, role.ID)
 
 	response := r.NewMessageResponse(RoleRemovalResponse(status).InteractionResponseData)
@@ -31,7 +24,7 @@ func RemoveClanRole(session *discordgo.Session, interaction *discordgo.Interacti
 	return response
 }
 
-func RoleRemovalResponse(status RoleRemovingStatus) *r.Data {
+func RoleRemovalResponse(status Status) *r.Data {
 	var data *r.Data
 
 	switch status {

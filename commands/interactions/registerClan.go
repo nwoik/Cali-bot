@@ -13,7 +13,7 @@ func RegisterClan(session *discordgo.Session, interaction *discordgo.Interaction
 	clans := c.Open("./resources/clan.json")
 	members := m.Open("./resources/members.json")
 
-	var status RegistrationStatus
+	var status Status
 	clans, status = AddClan(clans, members, interaction)
 
 	response := r.NewMessageResponse(ClanRegistrationResponse(interaction, status).InteractionResponseData)
@@ -24,7 +24,7 @@ func RegisterClan(session *discordgo.Session, interaction *discordgo.Interaction
 	return response
 }
 
-func ClanRegistrationResponse(interaction *discordgo.InteractionCreate, status RegistrationStatus) *r.Data {
+func ClanRegistrationResponse(interaction *discordgo.InteractionCreate, status Status) *r.Data {
 	var data *r.Data
 	args := interaction.ApplicationCommandData().Options
 	name := GetArgument(args, "name").StringValue()

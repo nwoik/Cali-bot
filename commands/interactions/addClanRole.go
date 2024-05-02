@@ -7,13 +7,6 @@ import (
 	c "github.com/nwoik/calibotapi/clan"
 )
 
-type RoleAddingStatus int
-
-const (
-	RoleAdded    RoleAddingStatus = 1
-	AlreadyAdded RoleAddingStatus = 2
-)
-
 func AddClanRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	clans := c.Open("./resources/clan.json")
 	clan := GetClan(clans, interaction.GuildID)
@@ -21,7 +14,7 @@ func AddClanRole(session *discordgo.Session, interaction *discordgo.InteractionC
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, clan.GuildID)
 
-	var status RoleAddingStatus
+	var status Status
 	clan.ExtraRoles, status = AddExtraRole(clan.ExtraRoles, role.ID)
 
 	response := r.NewMessageResponse(RoleAdditionResponse(status).InteractionResponseData)
@@ -31,7 +24,7 @@ func AddClanRole(session *discordgo.Session, interaction *discordgo.InteractionC
 	return response
 }
 
-func RoleAdditionResponse(status RoleAddingStatus) *r.Data {
+func RoleAdditionResponse(status Status) *r.Data {
 	var data *r.Data
 
 	switch status {
