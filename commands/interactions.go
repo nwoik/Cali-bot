@@ -41,6 +41,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.RemoveClanRole(session, interaction).InteractionResponse
 		case "promote":
 			response = interactions.Promote(session, interaction).InteractionResponse
+		case "demote":
+			response = interactions.Demote(session, interaction).InteractionResponse
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)

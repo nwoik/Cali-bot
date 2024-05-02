@@ -262,12 +262,16 @@ func Remove(slice []string, value string) ([]string, Status) {
 	return slice, NotFound
 }
 
+func RemoveRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, guildMember *discordgo.Member, roleid string) {
+	err := session.GuildMemberRoleRemove(interaction.GuildID, guildMember.User.ID, roleid)
+	if err != nil {
+		fmt.Println("Error removing role from member: ", err)
+	}
+}
+
 func RemoveRoles(session *discordgo.Session, interaction *discordgo.InteractionCreate, guildMember *discordgo.Member) {
 	for _, roleID := range guildMember.Roles {
-		err := session.GuildMemberRoleRemove(interaction.GuildID, guildMember.User.ID, roleID)
-		if err != nil {
-			fmt.Println("Error removing role from member: ", err)
-		}
+		RemoveRole(session, interaction, guildMember, roleID)
 	}
 }
 
