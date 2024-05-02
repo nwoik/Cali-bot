@@ -25,6 +25,9 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 	}
 
 	clan := GetClan(clans, clanid)
+	if clan == nil {
+		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	}
 	clanMembers := GetClanMembers(clan, members)
 
 	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, clanMembers).InteractionResponseData)
