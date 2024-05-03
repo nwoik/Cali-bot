@@ -20,6 +20,9 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 	member := GetMember(members, user.ID)
+	if member == nil {
+		return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.\nThey must register with the bot and clan to be an officer").InteractionResponseData)
+	}
 
 	AddRole(session, interaction, member, clan.OfficerRole)
 

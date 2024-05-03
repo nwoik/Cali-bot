@@ -251,6 +251,10 @@ func RemoveClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Sess
 	user := GetArgument(args, "user").UserValue(session)
 	member := GetMember(members, user.ID)
 
+	if member == nil {
+		return members, NotFound
+	}
+
 	if clan.ClanID == member.ClanID {
 		member.ClanID = ""
 
