@@ -33,7 +33,7 @@ func EmbedResponse(session *discordgo.Session, interaction *discordgo.Interactio
 	} else {
 		guildID := interaction.GuildID
 		interactionUser := interaction.Member.User
-		memberID := interactionUser.ID
+		memberID := member.UserID
 
 		// Get the member's information
 		guildMember, errdata := GetGuildMember(session, guildID, memberID)
