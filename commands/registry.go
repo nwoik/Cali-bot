@@ -7,7 +7,8 @@ import (
 var globalCommands []*discordgo.ApplicationCommand = make([]*discordgo.ApplicationCommand, 0)
 
 func RegisterCommand(s *discordgo.Session) error {
-	register := NewChatApplicationCommand("register", "Registers a user with the bot")
+	register := NewChatApplicationCommand("register", "Registers a user with the bot").
+		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
 	register.Options = append(register.Options, NewCommandOption("ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	register.Options = append(register.Options, NewCommandOption("gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 
@@ -16,10 +17,12 @@ func RegisterCommand(s *discordgo.Session) error {
 	registerClan.Options = append(registerClan.Options, NewCommandOption("name", "Your clan's name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	registerClan.Options = append(registerClan.Options, NewCommandOption("clanid", "Your clan's in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 
-	viewMember := NewChatApplicationCommand("view-profile", "Leave member option blank to see yourself or ping the person you want to view")
+	viewMember := NewChatApplicationCommand("view-profile", "Leave member option blank to see yourself or ping the person you want to view").
+		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
 	viewMember.Options = append(viewMember.Options, NewCommandOption("member", "User's @", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
 
-	viewClan := NewChatApplicationCommand("view-clan", "Leave clanid blank to see the clan for the server you're in")
+	viewClan := NewChatApplicationCommand("view-clan", "Leave clanid blank to see the clan for the server you're in").
+		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
 	viewClan.Options = append(viewClan.Options, NewCommandOption("clanid", "In-game id of a clan", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
 
 	memberRole := NewChatApplicationCommand("member-role", "Register the role you want your members to have").
@@ -66,7 +69,8 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	demote.Options = append(demote.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
-	help := NewChatApplicationCommand("help", "Lists the bot's commands")
+	help := NewChatApplicationCommand("help", "Lists the bot's commands").
+		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
 
 	// Add commands here
 	globalCommands = append(globalCommands, help.ApplicationCommand)

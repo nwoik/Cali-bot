@@ -20,10 +20,22 @@ func HelpResponse(session *discordgo.Session, interaction *discordgo.Interaction
 	embed := e.NewRichEmbed("**Commands**", "All the info on the bot's commands ", 0xff00e4)
 
 	for _, command := range commands {
-		embed.AddField(fmt.Sprintf("**/%s**", command.Name), command.Description, false)
+		if hasPermission(interaction.Member, command.DefaultMemberPermissions) {
+			embed.AddField(fmt.Sprintf("**/%s**", command.Name), command.Description, false)
+		}
 	}
 
 	data = r.NewResponseData("").AddEmbed(embed)
 
 	return data
+}
+
+func hasPermission(member *discordgo.Member, requiredPermission *int64) bool {
+	// Check if member or requiredPermission is nil
+	if member == nil || requiredPermission == nil {
+		return false
+	}
+
+	// Check if the member has the required permission
+	return member.Permissions&(*requiredPermission) == *requiredPermission
 }
