@@ -183,7 +183,9 @@ func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *d
 	if member.ClanID != "" {
 		clans := c.Open("./resources/clan.json")
 		clan := GetClan(clans, member.ClanID)
-		embed.AddField("**Clan: **", clan.Name, true)
+		if clan != nil {
+			embed.AddField("**Clan: **", clan.Name, true)
+		}
 	}
 
 	embed.SetFooter(fmt.Sprintf("Requested by %s", discordUser.Username), discordUser.AvatarURL(""))
