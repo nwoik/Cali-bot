@@ -19,7 +19,7 @@ func Unblacklist(session *discordgo.Session, interaction *discordgo.InteractionC
 
 	var response *r.Response
 
-	if isBlacklisted(clan, user.ID) {
+	if IsBlacklisted(clan, user.ID) {
 		clan.Blacklist, _ = Remove(clan.Blacklist, user.ID)
 		response = r.NewMessageResponse(r.NewResponseData("User has been removed from clan blacklist").InteractionResponseData)
 	} else {

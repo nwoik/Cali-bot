@@ -1,6 +1,7 @@
-package util
+package interactions
 
 import (
+	"github.com/bwmarrin/discordgo"
 	c "github.com/nwoik/calibotapi/clan"
 	m "github.com/nwoik/calibotapi/member"
 )
@@ -35,10 +36,10 @@ func Negate(pred Predicate) Predicate {
 	}
 }
 
-func Filter(array []interface{}, Predicate func(interface{}) bool) []interface{} {
-	filtered := make([]interface{}, 0)
+func FilterMembers(members []*m.Member, Predicate func(interface{}) bool) []*m.Member {
+	filtered := make([]*m.Member, 0)
 
-	for _, item := range array {
+	for _, item := range members {
 		if Predicate(item) {
 			filtered = append(filtered, item)
 		}
@@ -47,8 +48,26 @@ func Filter(array []interface{}, Predicate func(interface{}) bool) []interface{}
 	return filtered
 }
 
-func FilterByClan(clan *c.Clan) Predicate {
+func InClan(clan *c.Clan) Predicate {
 	return func(member interface{}) bool {
 		return member.(*m.Member).ClanID == clan.ClanID
+	}
+}
+
+func IsLeader(clan *c.Clan) Predicate {
+	return func(member interface{}) bool {
+		return member.(*m.Member).UserID == clan.LeaderID
+	}
+}
+
+func IsOfficer(session *discordgo.Session, clan *c.Clan) Predicate {
+	return func(member interface{}) bool {
+		return IsRole(session, member.(*m.Member), clan, clan.OfficerRole)
+	}
+}
+
+func IsMember(session *discordgo.Session, clan *c.Clan) Predicate {
+	return func(member interface{}) bool {
+		return IsRole(session, member.(*m.Member), clan, clan.MemberRole)
 	}
 }

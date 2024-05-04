@@ -68,7 +68,7 @@ func AddClanMember(clan *c.Clan, members []*m.Member, session *discordgo.Session
 
 	if member != nil {
 		if clan.ClanID != member.ClanID {
-			if !isBlacklisted(clan, member.UserID) {
+			if !IsBlacklisted(clan, member.UserID) {
 				member.ClanID = clan.ClanID
 				AddRole(session, interaction, member, clan.MemberRole)
 				for _, role := range clan.ExtraRoles {
@@ -106,7 +106,7 @@ func BlacklistUser(clan *c.Clan, members []*m.Member, session *discordgo.Session
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 
-	if !isBlacklisted(clan, user.ID) {
+	if !IsBlacklisted(clan, user.ID) {
 		clan.Blacklist = append(clan.Blacklist, user.ID)
 		return clan, Blacklisted
 	}
@@ -137,17 +137,17 @@ func GetClan(clans []*c.Clan, id string) *c.Clan {
 	return nil
 }
 
-func GetClanMembers(clan *c.Clan, members []*m.Member) []*m.Member {
-	clanMembers := make([]*m.Member, 0)
+// func GetClanMembers(clan *c.Clan, members []*m.Member) []*m.Member {
+// 	clanMembers := make([]*m.Member, 0)
 
-	for _, member := range members {
-		if clan.ClanID == member.ClanID {
-			clanMembers = append(clanMembers, member)
-		}
-	}
+// 	for _, member := range members {
+// 		if clan.ClanID == member.ClanID {
+// 			clanMembers = append(clanMembers, member)
+// 		}
+// 	}
 
-	return clanMembers
-}
+// 	return clanMembers
+// }
 
 func GetMember(members []*m.Member, userid string) *m.Member {
 	for _, member := range members {
@@ -216,13 +216,11 @@ func PrintBlacklist(clan *c.Clan) string {
 	return output
 }
 
-func PrintMembers(session *discordgo.Session, clan *c.Clan, members []*m.Member, role string) string {
+func PrintMembers(members []*m.Member) string {
 	var output string
 
 	for _, member := range members {
-		if isRole(session, member, clan, role) {
-			output += fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
-		}
+		output += fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
 	}
 
 	if output == "" {
@@ -293,7 +291,7 @@ func RemoveRoles(session *discordgo.Session, interaction *discordgo.InteractionC
 	}
 }
 
-func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {
+func IsRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {
 	guildMember, _ := GetGuildMember(session, clan.GuildID, member.UserID)
 
 	for _, role := range guildMember.Roles {
@@ -304,7 +302,7 @@ func isRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole
 	return false
 }
 
-func isBlacklisted(clan *c.Clan, userid string) bool {
+func IsBlacklisted(clan *c.Clan, userid string) bool {
 	for _, id := range clan.Blacklist {
 		if id == userid {
 			return true
