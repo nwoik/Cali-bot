@@ -11,5 +11,7 @@ requiredFiles = [".replit"]
 
 [deployment]
 run = ["go", "run", "."]
-ignorePorts = true
 deploymentTarget = "gce"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-65e64865-c6ea-411b-b99c-30e6b3e98392"
