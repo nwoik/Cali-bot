@@ -11,5 +11,5 @@ requiredFiles = [".replit"]
 
 [deployment]
 run = ["go", "run", "."]
-ignorePorts = false
+ignorePorts = true
 deploymentTarget = "gce"
