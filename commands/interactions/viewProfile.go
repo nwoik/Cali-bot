@@ -4,7 +4,7 @@ import (
 	r "calibot/commands/responses"
 
 	"github.com/bwmarrin/discordgo"
-	m "github.com/nwoik/calibotapi/member"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func ViewProfile(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {

@@ -1,20 +1,25 @@
 package events
 
 import (
-	i "calibot/commands/interactions"
+	c "calibot/client"
 	"fmt"
 
-	m "github.com/nwoik/calibotapi/member"
-
 	"github.com/bwmarrin/discordgo"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
-func MemberLeave(session *discordgo.Session, member *discordgo.GuildMemberRemove) {
-	fmt.Printf("Member left the server: %s\n", member.User.Username)
-	members := m.Open("./resources/members.json")
+func MemberLeave(session *discordgo.Session, guildMember *discordgo.GuildMemberRemove) {
+	fmt.Printf("Member left the server: %s\n", guildMember.User.Username)
 
-	botMember := i.GetMember(members, member.User.ID)
-	botMember.ClanID = ""
+	client := c.NewMongoClient()
+	collection := client.Database("calibot").Collection("members")
+	memberRepo := m.NewMemberRepo(collection)
 
-	m.Close("./resources/members.json", members)
+	member, err := memberRepo.Get(guildMember.User.ID)
+
+	if err != nil {
+		return
+	}
+
+	member.ClanID = ""
 }

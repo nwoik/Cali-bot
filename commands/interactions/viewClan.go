@@ -5,10 +5,9 @@ import (
 	e "calibot/embeds"
 	"fmt"
 
-	c "github.com/nwoik/calibotapi/clan"
-
 	"github.com/bwmarrin/discordgo"
-	m "github.com/nwoik/calibotapi/member"
+	c "github.com/nwoik/calibotapi/model/clan"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {

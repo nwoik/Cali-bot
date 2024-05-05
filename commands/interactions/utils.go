@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
-	m "github.com/nwoik/calibotapi/member"
+	c "github.com/nwoik/calibotapi/model/clan"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func AddClan(clans []*c.Clan, members []*m.Member, interaction *discordgo.InteractionCreate) ([]*c.Clan, Status) {

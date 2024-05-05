@@ -3,8 +3,8 @@ package interactions
 import (
 	r "calibot/commands/responses"
 
-	c "github.com/nwoik/calibotapi/clan"
-	m "github.com/nwoik/calibotapi/member"
+	c "github.com/nwoik/calibotapi/model/clan"
+	m "github.com/nwoik/calibotapi/model/member"
 
 	"github.com/bwmarrin/discordgo"
 )

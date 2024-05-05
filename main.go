@@ -2,7 +2,8 @@ package main
 
 import (
 	"calibot/commands"
-	"calibot/events"
+	events "calibot/events"
+	"calibot/globals"
 	"fmt"
 	"log"
 	"os"
@@ -13,8 +14,9 @@ import (
 )
 
 func main() {
-	token := os.Getenv("CALIBOT_TOKEN")
-	session, err := discordgo.New(fmt.Sprintf("Bot %s", token))
+	globals.InitConfig()
+
+	session, err := discordgo.New(fmt.Sprintf("Bot %s", globals.TOKEN))
 	if err != nil {
 		log.Fatal(err)
 	}

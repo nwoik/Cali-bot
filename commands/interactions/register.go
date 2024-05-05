@@ -3,7 +3,7 @@ package interactions
 import (
 	responses "calibot/commands/responses"
 
-	m "github.com/nwoik/calibotapi/member"
+	m "github.com/nwoik/calibotapi/model/member"
 
 	"github.com/bwmarrin/discordgo"
 )

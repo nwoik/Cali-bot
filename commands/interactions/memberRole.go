@@ -4,7 +4,7 @@ import (
 	r "calibot/commands/responses"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
+	c "github.com/nwoik/calibotapi/model/clan"
 )
 
 func MemberRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
