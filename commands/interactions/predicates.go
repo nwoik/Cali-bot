@@ -6,6 +6,10 @@ import (
 	m "github.com/nwoik/calibotapi/model/member"
 )
 
+// func InClan(clan *c.Clan) bson.E {
+// 	return bson.E{Key: "clanid", Value: clan.ClanID}
+// }
+
 type Predicate func(interface{}) bool
 
 func And(predicates ...Predicate) Predicate {

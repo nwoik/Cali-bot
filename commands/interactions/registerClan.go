@@ -3,23 +3,14 @@ package interactions
 import (
 	r "calibot/commands/responses"
 
-	c "github.com/nwoik/calibotapi/model/clan"
-	m "github.com/nwoik/calibotapi/model/member"
-
 	"github.com/bwmarrin/discordgo"
 )
 
 func RegisterClan(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	members := m.Open("./resources/members.json")
 
-	var status Status
-	clans, status = AddClan(clans, members, interaction)
+	status := AddClan(interaction)
 
 	response := r.NewMessageResponse(ClanRegistrationResponse(interaction, status).InteractionResponseData)
-
-	c.Close("./resources/clan.json", clans)
-	m.Close("./resources/members.json", members)
 
 	return response
 }
@@ -30,14 +21,14 @@ func ClanRegistrationResponse(interaction *discordgo.InteractionCreate, status S
 	name := GetArgument(args, "name").StringValue()
 
 	switch status {
+	case FailedDBConnection:
+		data = r.NewResponseData("Failed to connect to database. Please ping admins")
 	case Success:
 		data = r.NewResponseData("Registered Clan: " + name)
 	case InvalidID:
 		data = r.NewResponseData("Invalid Game-ID. Failed to register " + name)
-	case AlreadyRegistered:
+	case ClanAlreadyRegistered:
 		data = r.NewResponseData("Clan is already registered. Details were updated")
-	case Failure:
-		data = r.NewResponseData("Clan is already registered for this server.")
 	case UserNotRegistered:
 		data = r.NewResponseData("User must register with the bot before registering a clan. Use `/register`")
 	}

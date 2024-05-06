@@ -1,31 +1,46 @@
 package interactions
 
 import (
+	"calibot/client"
 	r "calibot/commands/responses"
+	"context"
 
 	"github.com/bwmarrin/discordgo"
 	m "github.com/nwoik/calibotapi/model/member"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func ViewProfile(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	members := m.Open("./resources/members.json")
+	client, err := client.NewMongoClient()
+
+	defer client.Disconnect(context.Background())
+
+	if err != nil {
+		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
+	}
 
 	args := interaction.ApplicationCommandData().Options
 	var member *m.Member
 
 	if len(args) != 0 {
 		user := GetArgument(args, "member").UserValue(session)
-		member = GetMember(members, user.ID)
+		member, err = GetMember(client, user.ID)
+		if err != nil {
+			return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.").InteractionResponseData)
+		}
 	} else {
-		member = GetMember(members, interaction.Member.User.ID)
+		member, err = GetMember(client, interaction.Member.User.ID)
+		if err != nil {
+			return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.").InteractionResponseData)
+		}
 	}
 
-	response := r.NewMessageResponse(EmbedResponse(session, interaction, member).InteractionResponseData)
+	response := r.NewMessageResponse(EmbedResponse(client, session, interaction, member).InteractionResponseData)
 
 	return response
 }
 
-func EmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member) *r.Data {
+func EmbedResponse(client *mongo.Client, session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member) *r.Data {
 	var data *r.Data
 
 	if member == nil {
@@ -41,7 +56,7 @@ func EmbedResponse(session *discordgo.Session, interaction *discordgo.Interactio
 			return errdata
 		}
 
-		embed := MemberEmbed(member, guildMember, interactionUser)
+		embed := MemberEmbed(client, member, guildMember, interactionUser)
 
 		data = r.NewResponseData("").AddEmbed(embed)
 	}

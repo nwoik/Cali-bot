@@ -10,21 +10,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func NewMongoClient() *mongo.Client {
+func NewMongoClient() (*mongo.Client, error) {
 	pswd := globals.MONGO_PASS
 	mongoClient, err := mongo.Connect(context.Background(),
 		options.Client().ApplyURI("mongodb://mongo:"+pswd+"@viaduct.proxy.rlwy.net:58839/?tlsCertificateKeyFilePassword="+pswd))
 
 	if err != nil {
-		log.Fatal("error connecting to db", err)
+		log.Println("error connecting to db", err)
+		return nil, err
 	}
 
 	log.Println("successfully connected")
 
 	err = mongoClient.Ping(context.Background(), readpref.Primary())
 	if err != nil {
-		log.Fatal("ping failed")
+		log.Println("ping failed")
+		return nil, err
 	}
 
-	return mongoClient
+	return mongoClient, nil
 }

@@ -1,37 +1,51 @@
 package interactions
 
 import (
+	"calibot/client"
 	r "calibot/commands/responses"
+	"context"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/model/clan"
+	"github.com/nwoik/calibotapi/model/clan"
 	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	members := m.Open("./resources/members.json")
-	clans := c.Open("./resources/clan.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
+	client, err := client.NewMongoClient()
+
+	defer client.Disconnect(context.Background())
+
+	if err != nil {
+		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
+	}
+
+	clanCollection := client.Database("calibot").Collection("clan")
+	clanRepo := clan.NewClanRepo(clanCollection)
+	clan, err := clanRepo.Get(interaction.GuildID)
+
+	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
 
 	var status Status
-	clan, status = BlacklistUser(clan, members, session, interaction)
+	clan, status = BlacklistUser(clan, session, interaction)
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
-	member := GetMember(members, user.ID)
+
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+	member, err := memberRepo.Get(user.ID)
 
 	if member != nil {
-		members, _ = RemoveClanMember(clan, members, session, interaction)
+		member, _ = RemoveClanMember(clan, member, session, interaction)
+		memberRepo.Update(member)
 	}
 
-	response := r.NewMessageResponse(BlacklistResponse(interaction, user, status).InteractionResponseData)
+	clanRepo.Update(clan)
 
-	c.Close("./resources/clan.json", clans)
-	m.Close("./resources/members.json", members)
+	response := r.NewMessageResponse(BlacklistResponse(interaction, user, status).InteractionResponseData)
 
 	return response
 }
@@ -47,4 +61,8 @@ func BlacklistResponse(interaction *discordgo.InteractionCreate, user *discordgo
 	}
 
 	return data
+}
+
+func FaildDBResponse() *r.Data {
+	return r.NewResponseData("Failed to connect to database")
 }

@@ -1,16 +1,28 @@
 package interactions
 
 import (
+	"calibot/client"
 	r "calibot/commands/responses"
+	"context"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/model/clan"
+	"github.com/nwoik/calibotapi/model/clan"
 )
 
 func RemoveClanRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
+	client, err := client.NewMongoClient()
+
+	defer client.Disconnect(context.Background())
+
+	if err != nil {
+		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
+	}
+
+	clanCollection := client.Database("calibot").Collection("clan")
+	clanRepo := clan.NewClanRepo(clanCollection)
+	clan, err := clanRepo.Get(interaction.GuildID)
+
+	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
 
@@ -19,10 +31,9 @@ func RemoveClanRole(session *discordgo.Session, interaction *discordgo.Interacti
 
 	var status Status
 	clan.ExtraRoles, status = Remove(clan.ExtraRoles, role.ID)
+	clanRepo.Update(clan)
 
 	response := r.NewMessageResponse(RoleRemovalResponse(status).InteractionResponseData)
-
-	c.Close("./resources/clan.json", clans)
 
 	return response
 }
@@ -31,9 +42,9 @@ func RoleRemovalResponse(status Status) *r.Data {
 	var data *r.Data
 
 	switch status {
-	case Removed:
+	case ClanMemberRemoved:
 		data = r.NewResponseData("Role has been removed from clan's extra roles")
-	case NotFound:
+	case ClanMemberNotFound:
 		data = r.NewResponseData("Role not found")
 	}
 

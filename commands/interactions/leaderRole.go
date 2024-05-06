@@ -1,33 +1,44 @@
 package interactions
 
 import (
+	"calibot/client"
 	r "calibot/commands/responses"
+	"context"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/model/clan"
+	"github.com/nwoik/calibotapi/model/clan"
 )
 
 func LeaderRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	clan := GetClan(clans, interaction.GuildID)
+	client, err := client.NewMongoClient()
 
-	if clan == nil {
+	defer client.Disconnect(context.Background())
+
+	if err != nil {
+		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
+	}
+
+	clanCollection := client.Database("calibot").Collection("clan")
+	clanRepo := clan.NewClanRepo(clanCollection)
+	clan, err := clanRepo.Get(interaction.GuildID)
+
+	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
+
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, interaction.GuildID)
 
 	clan.LeaderRole = role.ID
+	clanRepo.Update(clan)
 
-	response := r.NewMessageResponse(MemberResponse().InteractionResponseData)
-
-	c.Close("./resources/clan.json", clans)
+	response := r.NewMessageResponse(LeaderResponse().InteractionResponseData)
 
 	return response
 }
 
 func LeaderResponse() *r.Data {
-	data := r.NewResponseData("Role registered")
+	data := r.NewResponseData("Leader role registered")
 
 	return data
 }

@@ -1,8 +1,10 @@
 package interactions
 
 import (
+	"calibot/client"
 	r "calibot/commands/responses"
 	e "calibot/embeds"
+	"context"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,8 +13,13 @@ import (
 )
 
 func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	members := m.Open("./resources/members.json")
-	clans := c.Open("./resources/clan.json")
+	client, err := client.NewMongoClient()
+
+	defer client.Disconnect(context.Background())
+
+	if err != nil {
+		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
+	}
 
 	args := interaction.ApplicationCommandData().Options
 	var clanid string
@@ -23,11 +30,17 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 		clanid = interaction.GuildID
 	}
 
-	clan := GetClan(clans, clanid)
-	if clan == nil {
+	clan, err := GetClan(client, clanid)
+
+	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
-	clanMembers := FilterMembers(members, InClan(clan))
+
+	clanMembers, err := GetMembers(client)
+
+	if err != nil {
+		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	}
 
 	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, clanMembers).InteractionResponseData)
 
