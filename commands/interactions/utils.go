@@ -111,7 +111,10 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 
-	member, err := GetMember(client, user.ID)
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+	member, err := memberRepo.Get(user.ID)
+
 	if err != nil {
 		return UserNotRegistered
 	}
@@ -125,6 +128,7 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 	if clan.ClanID != member.ClanID {
 		if !IsBlacklisted(clan, member.UserID) {
 			member.ClanID = clan.ClanID
+			memberRepo.Update(member)
 			AddRole(session, interaction, member, clan.MemberRole)
 			for _, role := range clan.ExtraRoles {
 				AddRole(session, interaction, member, role)
