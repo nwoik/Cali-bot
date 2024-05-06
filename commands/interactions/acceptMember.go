@@ -1,7 +1,7 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"

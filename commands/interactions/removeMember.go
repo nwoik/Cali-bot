@@ -2,7 +2,7 @@ package interactions
 
 import (
 	"calibot/client"
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 	"context"
 	"fmt"
 
@@ -33,6 +33,10 @@ func RemoveMember(session *discordgo.Session, interaction *discordgo.Interaction
 	memberCollection := client.Database("calibot").Collection("member")
 	memberRepo := m.NewMemberRepo(memberCollection)
 	member, err := memberRepo.Get(user.ID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.NewResponseData("This user registered.").InteractionResponseData)
+	}
 
 	member, status = RemoveClanMember(clan, member, session, interaction)
 	memberRepo.Update(member)

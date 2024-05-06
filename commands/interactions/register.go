@@ -1,7 +1,7 @@
 package interactions
 
 import (
-	responses "calibot/commands/responses"
+	responses "calibot/commands/response"
 
 	"github.com/bwmarrin/discordgo"
 )

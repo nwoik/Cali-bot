@@ -2,7 +2,7 @@ package interactions
 
 import (
 	"calibot/client"
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 	e "calibot/embeds"
 	"context"
 	"fmt"
