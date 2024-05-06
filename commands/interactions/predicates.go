@@ -4,13 +4,14 @@ import (
 	"github.com/bwmarrin/discordgo"
 	c "github.com/nwoik/calibotapi/model/clan"
 	m "github.com/nwoik/calibotapi/model/member"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-// func InClan(clan *c.Clan) bson.E {
-// 	return bson.E{Key: "clanid", Value: clan.ClanID}
-// }
-
 type Predicate func(interface{}) bool
+
+func Pred(key string, value string) bson.E {
+	return bson.E{Key: key, Value: value}
+}
 
 func And(predicates ...Predicate) Predicate {
 	return func(item interface{}) bool {

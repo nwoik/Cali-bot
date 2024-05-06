@@ -26,8 +26,7 @@ func AddClanRole(session *discordgo.Session, interaction *discordgo.InteractionC
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, clan.GuildID)
 
-	var status Status
-	clan.ExtraRoles, status = AddExtraRole(clan.ExtraRoles, role.ID)
+	status := AddExtraRole(client, clan, role.ID)
 
 	response := r.NewMessageResponse(RoleAdditionResponse(status).InteractionResponseData)
 
@@ -42,6 +41,8 @@ func RoleAdditionResponse(status Status) *r.Data {
 		data = r.NewResponseData("Role has been added to clan members")
 	case AlreadyAdded:
 		data = r.NewResponseData("Role is already to the clan members")
+	case ClanNotRegistered:
+		return r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`")
 	}
 
 	return data

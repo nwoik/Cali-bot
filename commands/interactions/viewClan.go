@@ -36,13 +36,13 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
 
-	clanMembers, err := GetMembers(client)
+	members, err := GetMembersWithCond(client, Pred("clanid", clan.ClanID))
 
 	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
 	}
 
-	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, clanMembers).InteractionResponseData)
+	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members).InteractionResponseData)
 
 	return response
 }
@@ -62,11 +62,11 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.SetThumbnail(guild.IconURL(""))
 	embed.AddField("", clan.ClanID, false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
-	embed.AddField("", fmt.Sprintf("**Leader: **%s", PingRole(clan.LeaderRole)), false)
+	embed.AddField("", fmt.Sprint("**Leader: **", PingRole(clan.LeaderRole)), false)
 	embed.AddField("", PrintMembers(leader), false)
-	embed.AddField("", fmt.Sprintf("**Officers: **%s", PingRole(clan.OfficerRole)), false)
+	embed.AddField("", fmt.Sprint("**Officers: **", PingRole(clan.OfficerRole)), false)
 	embed.AddField("", PrintMembers(officers), false)
-	embed.AddField("", fmt.Sprintf("**Members: **%s", PingRole(clan.MemberRole)), false)
+	embed.AddField("", fmt.Sprint("**Members: **", PingRole(clan.MemberRole)), false)
 	embed.AddField("", PrintMembers(regularMembers), false)
 	embed.AddField("Blacklist", PrintBlacklist(clan), false)
 

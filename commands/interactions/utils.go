@@ -138,14 +138,24 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 
 }
 
-func AddExtraRole(roles []string, id string) ([]string, Status) {
-	for _, roleid := range roles {
+func AddExtraRole(client *mongo.Client, clan *c.Clan, id string) Status {
+	clanCollection := client.Database("calibot").Collection("clan")
+	clanRepo := c.NewClanRepo(clanCollection)
+	clan, err := clanRepo.Get(clan.GuildID)
+
+	if err != nil {
+		return ClanNotRegistered
+	}
+
+	for _, roleid := range clan.ExtraRoles {
 		if roleid == id {
-			return roles, AlreadyAdded
+			return AlreadyAdded
 		}
 	}
-	roles = append(roles, id)
-	return roles, RoleAdded
+	clan.ExtraRoles = append(clan.ExtraRoles, id)
+	clanRepo.Update(clan)
+
+	return RoleAdded
 }
 
 func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member, role string) {
