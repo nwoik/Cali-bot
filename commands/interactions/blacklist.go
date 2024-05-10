@@ -1,9 +1,8 @@
 package interactions
 
 import (
-	"calibot/client"
 	r "calibot/commands/response"
-	"context"
+	"calibot/globals"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -12,13 +11,7 @@ import (
 )
 
 func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	client, err := client.NewMongoClient()
-
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
-	}
+	client := globals.CLIENT
 
 	clanCollection := client.Database("calibot").Collection("clan")
 	clanRepo := clan.NewClanRepo(clanCollection)

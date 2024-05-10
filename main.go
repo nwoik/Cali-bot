@@ -4,6 +4,7 @@ import (
 	"calibot/commands"
 	events "calibot/events"
 	"calibot/globals"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -39,6 +40,7 @@ func main() {
 	}
 
 	defer session.Close()
+	defer globals.CLIENT.Disconnect(context.Background())
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)

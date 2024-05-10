@@ -1,9 +1,8 @@
 package interactions
 
 import (
-	"calibot/client"
 	r "calibot/commands/response"
-	"context"
+	"calibot/globals"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,15 +10,9 @@ import (
 )
 
 func RemoveMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	client, err := client.NewMongoClient()
+	client := globals.CLIENT
 
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
-	}
-
-	clan, err := GetClan(client, interaction.GuildID)
+	clan, err := GetClan(interaction.GuildID)
 
 	if err != nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)

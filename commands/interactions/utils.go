@@ -1,27 +1,19 @@
 package interactions
 
 import (
-	"calibot/client"
 	r "calibot/commands/response"
 	e "calibot/embeds"
-	"context"
+	"calibot/globals"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	c "github.com/nwoik/calibotapi/model/clan"
 	m "github.com/nwoik/calibotapi/model/member"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func AddClan(interaction *discordgo.InteractionCreate) Status {
-	client, err := client.NewMongoClient()
-
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return FailedDBConnection
-	}
+	client := globals.CLIENT
 
 	clanCollection := client.Database("calibot").Collection("clan")
 	clanRepo := c.NewClanRepo(clanCollection)
@@ -62,13 +54,7 @@ func AddClan(interaction *discordgo.InteractionCreate) Status {
 }
 
 func AddMember(interaction *discordgo.InteractionCreate) Status {
-	client, err := client.NewMongoClient()
-
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return FailedDBConnection
-	}
+	client := globals.CLIENT
 
 	memberCollection := client.Database("calibot").Collection("member")
 	memberRepo := m.NewMemberRepo(memberCollection)
@@ -100,13 +86,7 @@ func AddMember(interaction *discordgo.InteractionCreate) Status {
 }
 
 func AddClanMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) Status {
-	client, err := client.NewMongoClient()
-
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return FailedDBConnection
-	}
+	client := globals.CLIENT
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
@@ -119,7 +99,7 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 		return UserNotRegistered
 	}
 
-	clan, err := GetClan(client, interaction.GuildID)
+	clan, err := GetClan(interaction.GuildID)
 
 	if err != nil {
 		return ClanNotRegisteredWithGuild
@@ -142,7 +122,8 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 
 }
 
-func AddExtraRole(client *mongo.Client, clan *c.Clan, id string) Status {
+func AddExtraRole(clan *c.Clan, id string) Status {
+	client := globals.CLIENT
 	clanCollection := client.Database("calibot").Collection("clan")
 	clanRepo := c.NewClanRepo(clanCollection)
 	clan, err := clanRepo.Get(clan.GuildID)
@@ -180,7 +161,9 @@ func BlacklistUser(clan *c.Clan, session *discordgo.Session, interaction *discor
 	return clan, AlreadyBlacklisted
 }
 
-func GetMembersWithCond(client *mongo.Client, predicates ...bson.E) ([]*m.Member, error) {
+func GetMembersWithCond(predicates ...bson.E) ([]*m.Member, error) {
+	client := globals.CLIENT
+
 	memberCollection := client.Database("calibot").Collection("member")
 	memberRepo := m.NewMemberRepo(memberCollection)
 
@@ -196,21 +179,27 @@ func GetArgument(options []*discordgo.ApplicationCommandInteractionDataOption, n
 	return nil
 }
 
-func GetClan(client *mongo.Client, id string) (*c.Clan, error) {
+func GetClan(id string) (*c.Clan, error) {
+	client := globals.CLIENT
+
 	clanCollection := client.Database("calibot").Collection("clan")
 	clanRepo := c.NewClanRepo(clanCollection)
 
 	return clanRepo.Get(id)
 }
 
-func GetMember(client *mongo.Client, id string) (*m.Member, error) {
+func GetMember(id string) (*m.Member, error) {
+	client := globals.CLIENT
+
 	memberCollection := client.Database("calibot").Collection("member")
 	memberRepo := m.NewMemberRepo(memberCollection)
 
 	return memberRepo.Get(id)
 }
 
-func GetMembers(client *mongo.Client) ([]*m.Member, error) {
+func GetMembers() ([]*m.Member, error) {
+	client := globals.CLIENT
+
 	memberCollection := client.Database("calibot").Collection("member")
 	memberRepo := m.NewMemberRepo(memberCollection)
 
@@ -231,7 +220,7 @@ func GetGuildMember(session *discordgo.Session, guildID string, memberID string)
 	return guildMember, nil
 }
 
-func MemberEmbed(client *mongo.Client, member *m.Member, guildMember *discordgo.Member, discordUser *discordgo.User) *e.Embed {
+func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *discordgo.User) *e.Embed {
 	embed := e.NewRichEmbed(member.Nick, "User Info", 0x08d052c)
 	embed.SetThumbnail(guildMember.AvatarURL(""))
 
@@ -239,7 +228,7 @@ func MemberEmbed(client *mongo.Client, member *m.Member, guildMember *discordgo.
 	embed.AddField("**ID: **", member.IGID, false)
 
 	if member.ClanID != "" {
-		clan, err := GetClan(client, member.ClanID)
+		clan, err := GetClan(member.ClanID)
 		if err == nil {
 			embed.AddField("**Clan: **", clan.Name, true)
 		}

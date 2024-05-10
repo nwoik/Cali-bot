@@ -1,24 +1,14 @@
 package interactions
 
 import (
-	"calibot/client"
 	r "calibot/commands/response"
-	"context"
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 func Demote(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	client, err := client.NewMongoClient()
-
-	defer client.Disconnect(context.Background())
-
-	if err != nil {
-		return r.NewMessageResponse(FaildDBResponse().InteractionResponseData)
-	}
-
-	clan, err := GetClan(client, interaction.GuildID)
+	clan, _ := GetClan(interaction.GuildID)
 
 	if clan == nil {
 		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
