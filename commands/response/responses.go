@@ -10,7 +10,7 @@ func AcceptedMember(user *discordgo.User) *Data {
 	return NewResponseData(fmt.Sprintf("%s has been added to the clan", user.Mention()))
 }
 
-func AlreadlyAccepted() *Data {
+func AlreadyAccepted() *Data {
 	return NewResponseData("User is already in the clan.")
 }
 
@@ -26,8 +26,8 @@ func ClanNotRegisteredWithGuild() *Data {
 	return NewResponseData("Clan is not registered with the server. User `register-clan`")
 }
 
-func ClanMemberRemoved(user *discordgo.User) *Data {
-	return NewResponseData(fmt.Sprintf("%s has been removed from the clan", user.Mention()))
+func ClanMemberRemoved() *Data {
+	return NewResponseData("Member has been removed")
 }
 
 func ClanMemberNotFound() *Data {
@@ -84,4 +84,8 @@ func FailedDBConnection() *Data {
 
 func FailedDBPing() *Data {
 	return NewResponseData("Failed to ping database")
+}
+
+func FailedGetGuildMember() *Data {
+	return NewResponseData("Error retrieving member information.")
 }

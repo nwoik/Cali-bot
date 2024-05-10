@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func AddClan(interaction *discordgo.InteractionCreate) Status {
+func AddClan(interaction *discordgo.InteractionCreate) *r.Data {
 	client := globals.CLIENT
 
 	clanCollection := client.Database("calibot").Collection("clan")
@@ -27,7 +27,7 @@ func AddClan(interaction *discordgo.InteractionCreate) Status {
 	member, err := memberRepo.Get(userid)
 
 	if err != nil {
-		return UserNotRegistered
+		return r.UserNotRegistered()
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -35,7 +35,7 @@ func AddClan(interaction *discordgo.InteractionCreate) Status {
 	clanid := GetArgument(args, "clanid").StringValue()
 
 	if len(clanid) < 7 {
-		return InvalidID
+		return r.InvalidClanID(name)
 	}
 
 	clan, err := clanRepo.Get(guildid)
@@ -47,13 +47,13 @@ func AddClan(interaction *discordgo.InteractionCreate) Status {
 
 		member.ClanID = clan.ClanID
 		memberRepo.Update(member)
-		return Success
+		return r.RegisteredClan(name)
 	}
 
-	return ClanAlreadyRegistered
+	return r.ClanAlreadyRegistered()
 }
 
-func AddMember(interaction *discordgo.InteractionCreate) Status {
+func AddMember(interaction *discordgo.InteractionCreate) *r.Data {
 	client := globals.CLIENT
 
 	memberCollection := client.Database("calibot").Collection("member")
@@ -64,7 +64,7 @@ func AddMember(interaction *discordgo.InteractionCreate) Status {
 	ign := GetArgument(args, "ign").StringValue()
 
 	if len(gameid) < 7 {
-		return InvalidID
+		return r.InvalidMemberID(interaction)
 	}
 
 	userid := interaction.Member.User.ID
@@ -75,17 +75,17 @@ func AddMember(interaction *discordgo.InteractionCreate) Status {
 	if err != nil {
 		member = m.CreateMember(username, ign, gameid, userid)
 		memberRepo.Insert(member)
-		return Success
+		return r.AcceptedMember(interaction.Member.User)
 	}
 
 	member.IGN = ign
 	member.IGID = gameid
 	memberRepo.Update(member)
 
-	return UserAlreadyRegistered
+	return r.UserAlreadyRegistered()
 }
 
-func AddClanMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) Status {
+func AddClanMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Data {
 	client := globals.CLIENT
 
 	args := interaction.ApplicationCommandData().Options
@@ -96,13 +96,13 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 	member, err := memberRepo.Get(user.ID)
 
 	if err != nil {
-		return UserNotRegistered
+		return r.UserNotRegistered()
 	}
 
 	clan, err := GetClan(interaction.GuildID)
 
 	if err != nil {
-		return ClanNotRegisteredWithGuild
+		return r.ClanNotRegisteredWithGuild()
 	}
 
 	if clan.ClanID != member.ClanID {
@@ -113,34 +113,34 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 			for _, role := range clan.ExtraRoles {
 				AddRole(session, interaction, member, role)
 			}
-			return Accepted
+			return r.AcceptedMember(user)
 		}
-		return BlacklistedUser
+		return r.BlacklistedUser()
 	}
 
-	return AlreadyAccepted
+	return r.AlreadyAccepted()
 
 }
 
-func AddExtraRole(clan *c.Clan, id string) Status {
+func AddExtraRole(clan *c.Clan, id string) *r.Data {
 	client := globals.CLIENT
 	clanCollection := client.Database("calibot").Collection("clan")
 	clanRepo := c.NewClanRepo(clanCollection)
 	clan, err := clanRepo.Get(clan.GuildID)
 
 	if err != nil {
-		return ClanNotRegistered
+		return r.ClanNotRegistered()
 	}
 
 	for _, roleid := range clan.ExtraRoles {
 		if roleid == id {
-			return AlreadyAdded
+			return r.AlreadyAdded()
 		}
 	}
 	clan.ExtraRoles = append(clan.ExtraRoles, id)
 	clanRepo.Update(clan)
 
-	return RoleAdded
+	return r.RoleAdded()
 }
 
 func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, member *m.Member, role string) {
@@ -150,15 +150,15 @@ func AddRole(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	}
 }
 
-func BlacklistUser(clan *c.Clan, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, Status) {
+func BlacklistUser(clan *c.Clan, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*c.Clan, *r.Data) {
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 
 	if !IsBlacklisted(clan, user.ID) {
 		clan.Blacklist = append(clan.Blacklist, user.ID)
-		return clan, Blacklisted
+		return clan, r.Blacklisted(user)
 	}
-	return clan, AlreadyBlacklisted
+	return clan, r.AlreadyBlacklisted()
 }
 
 func GetMembersWithCond(predicates ...bson.E) ([]*m.Member, error) {
@@ -215,7 +215,7 @@ func GetGuildMember(session *discordgo.Session, guildID string, memberID string)
 	guildMember, err := session.GuildMember(guildID, memberID)
 	if err != nil {
 		fmt.Println("Error retrieving member information:", err)
-		return nil, r.NewResponseData("Error retrieving member information.")
+		return nil, r.FailedGetGuildMember()
 	}
 	return guildMember, nil
 }
@@ -292,18 +292,19 @@ func PrintExtraRoles(clan *c.Clan) string {
 	return output
 }
 
-func RemoveClanMember(clan *c.Clan, member *m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*m.Member, Status) {
+func RemoveClanMember(clan *c.Clan, member *m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*m.Member, *r.Data) {
 	if clan.ClanID == member.ClanID {
 		member.ClanID = ""
 
 		guildMember, _ := GetGuildMember(session, interaction.GuildID, member.UserID)
 		RemoveRoles(session, interaction, guildMember)
-		return member, ClanMemberRemoved
+
+		return member, r.ClanMemberRemoved()
 	}
-	return member, ClanMemberNotFound
+	return member, r.ClanMemberNotFound()
 }
 
-func Remove(slice []string, value string) ([]string, Status) {
+func Remove(slice []string, value string) ([]string, *r.Data) {
 	index := -1
 	for i, v := range slice {
 		if v == value {
@@ -313,9 +314,9 @@ func Remove(slice []string, value string) ([]string, Status) {
 	}
 
 	if index != -1 {
-		return append(slice[:index], slice[index+1:]...), ClanMemberRemoved
+		return append(slice[:index], slice[index+1:]...), r.ClanMemberRemoved()
 	}
-	return slice, ClanMemberNotFound
+	return slice, r.ClanMemberNotFound()
 }
 
 func RemoveRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, guildMember *discordgo.Member, roleid string) {
