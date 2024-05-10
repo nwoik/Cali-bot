@@ -9,7 +9,7 @@ import (
 func InteractionCreate(session *discordgo.Session, interaction *discordgo.InteractionCreate) {
 	var response *discordgo.InteractionResponse
 	// Handle interaction type
-	if interaction.Type == discordgo.InteractionApplicationCommand {
+	if interaction.Type == discordgo.InteractionApplicationCommand && interaction.GuildID != "" {
 		switch cmd := interaction.ApplicationCommandData().Name; cmd {
 		case "help":
 			response = interactions.Help(session, interaction, globalCommands).InteractionResponse
@@ -43,6 +43,13 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.Promote(session, interaction).InteractionResponse
 		case "demote":
 			response = interactions.Demote(session, interaction).InteractionResponse
+		}
+	} else {
+		response = &discordgo.InteractionResponse{
+			Data: &discordgo.InteractionResponseData{
+				Content: "This command cannot be used in direct messages.",
+			},
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
 		}
 	}
 	_ = session.InteractionRespond(interaction.Interaction, response)
