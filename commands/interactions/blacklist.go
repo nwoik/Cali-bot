@@ -3,7 +3,6 @@ package interactions
 import (
 	r "calibot/commands/response"
 	"calibot/globals"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/nwoik/calibotapi/model/clan"
@@ -18,11 +17,11 @@ func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCre
 	clan, err := clanRepo.Get(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
-	var status Status
-	clan, status = BlacklistUser(clan, session, interaction)
+	var data *r.Data
+	clan, data = BlacklistUser(clan, session, interaction)
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
@@ -38,24 +37,7 @@ func Blacklist(session *discordgo.Session, interaction *discordgo.InteractionCre
 
 	clanRepo.Update(clan)
 
-	response := r.NewMessageResponse(BlacklistResponse(interaction, user, status).InteractionResponseData)
+	response := r.NewMessageResponse(data.InteractionResponseData)
 
 	return response
-}
-
-func BlacklistResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status Status) *r.Data {
-	var data *r.Data
-
-	switch status {
-	case Blacklisted:
-		data = r.NewResponseData(fmt.Sprintf("%s has been blacklisted.", user.Mention()))
-	case AlreadyBlacklisted:
-		data = r.NewResponseData("This user is already blacklisted.")
-	}
-
-	return data
-}
-
-func FaildDBResponse() *r.Data {
-	return r.NewResponseData("Failed to connect to database")
 }

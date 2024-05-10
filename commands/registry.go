@@ -23,7 +23,7 @@ func RegisterCommand(s *discordgo.Session) error {
 
 	viewClan := NewChatApplicationCommand("view-clan", "Leave clanid blank to see the clan for the server you're in").
 		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
-	viewClan.Options = append(viewClan.Options, NewCommandOption("clanid", "In-game id of a clan", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
+	viewClan.Options = append(viewClan.Options, NewCommandOption("clanid", "In-game id of a clan", discordgo.ApplicationCommandOptionString, false).ApplicationCommandOption)
 
 	memberRole := NewChatApplicationCommand("member-role", "Register the role you want your members to have").
 		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
@@ -62,11 +62,11 @@ func RegisterCommand(s *discordgo.Session) error {
 	removeClanRole.Options = append(removeClanRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
 	appoint := NewChatApplicationCommand("promote", "Promotes a member to officer for the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	appoint.Options = append(appoint.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	demote := NewChatApplicationCommand("demote", "Demotes an officer of the clan").
-		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	demote.Options = append(demote.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	help := NewChatApplicationCommand("help", "Lists the bot's commands").

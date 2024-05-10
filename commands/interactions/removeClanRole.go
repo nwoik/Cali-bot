@@ -16,7 +16,7 @@ func RemoveClanRole(session *discordgo.Session, interaction *discordgo.Interacti
 	clan, err := clanRepo.Get(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -35,10 +35,10 @@ func RoleRemovalResponse(status Status) *r.Data {
 	var data *r.Data
 
 	switch status {
-	case ClanMemberRemoved:
-		data = r.NewResponseData("Role has been removed from clan's extra roles")
-	case ClanMemberNotFound:
-		data = r.NewResponseData("Role not found")
+	case Removed:
+		data = r.RoleRemoved()
+	case NotFound:
+		data = r.RoleNotFound()
 	}
 
 	return data

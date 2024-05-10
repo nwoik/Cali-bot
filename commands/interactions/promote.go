@@ -2,7 +2,6 @@ package interactions
 
 import (
 	r "calibot/commands/response"
-	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -11,7 +10,7 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	clan, err := GetClan(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -19,12 +18,12 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	member, err := GetMember(user.ID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.\nThey must register with the bot and clan to be an officer").InteractionResponseData)
+		return r.NewMessageResponse(r.CantPromoteNonMember().InteractionResponseData)
 	}
 
 	AddRole(session, interaction, member, clan.OfficerRole)
 
-	response := r.NewMessageResponse(r.NewResponseData(fmt.Sprintf("%s has been appointed as officer :man_police_officer:", user.Mention())).InteractionResponseData)
+	response := r.NewMessageResponse(r.Promote(user).InteractionResponseData)
 
 	return response
 }

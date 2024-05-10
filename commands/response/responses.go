@@ -42,12 +42,28 @@ func AlreadyBlacklisted() *Data {
 	return NewResponseData("This user is already blacklisted.")
 }
 
+func RemovedFromBlackList() *Data {
+	return NewResponseData("User has been removed from clan blacklist")
+}
+
+func MemberNotBlacklisted() *Data {
+	return NewResponseData("User is not blacklisted")
+}
+
 func RoleAdded() *Data {
 	return NewResponseData("Role has been added to clan members")
 }
 
 func AlreadyAdded() *Data {
 	return NewResponseData("Role is already to the clan members")
+}
+
+func RoleRemoved() *Data {
+	return NewResponseData("Role has been removed from clan members")
+}
+
+func RoleNotFound() *Data {
+	return NewResponseData("Role was never assigned to clan members")
 }
 
 func RegisteredMember(interaction *discordgo.InteractionCreate) *Data {
@@ -63,7 +79,9 @@ func UserAlreadyRegistered() *Data {
 }
 
 func RegisteredClan(name string) *Data {
-	return NewResponseData("Registered Clan: " + name + "\nUse `/viewclan` to see details\nMake sure to use `/leaderrole`, `/officerrole` and `/memberrole` for the roles you want members to have.")
+	return NewResponseData("Registered Clan: " + name +
+		"\nUse `/viewclan` to see details" +
+		"\nMake sure to use `/leaderrole`, `/officerrole` and `/memberrole` for the roles you want members to have.")
 }
 
 func InvalidClanID(name string) *Data {
@@ -88,4 +106,29 @@ func FailedDBPing() *Data {
 
 func FailedGetGuildMember() *Data {
 	return NewResponseData("Error retrieving member information.")
+}
+
+func OfficerDemoted(user *discordgo.User) *Data {
+	return NewResponseData(fmt.Sprintf("%s has been demoted :cry:", user.Mention()))
+}
+
+func MemberRoleResponse() *Data {
+	return NewResponseData("Member role registered")
+}
+
+func OfficerRoleResponse() *Data {
+	return NewResponseData("Officer role registered")
+}
+
+func LeaderRoleResponse() *Data {
+	return NewResponseData("Leader role registered")
+}
+
+func Promote(user *discordgo.User) *Data {
+	return NewResponseData(fmt.Sprintf("%s has been appointed as officer :man_police_officer:", user.Mention()))
+}
+
+func CantPromoteNonMember() *Data {
+	return NewResponseData("This user is not registered with the bot." +
+		"\nThey must register with the bot and clan to be an officer")
 }

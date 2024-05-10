@@ -16,7 +16,7 @@ func MemberRole(session *discordgo.Session, interaction *discordgo.InteractionCr
 	clan, err := clanRepo.Get(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -25,13 +25,7 @@ func MemberRole(session *discordgo.Session, interaction *discordgo.InteractionCr
 	clan.MemberRole = role.ID
 	clanRepo.Update(clan)
 
-	response := r.NewMessageResponse(MemberResponse().InteractionResponseData)
+	response := r.NewMessageResponse(r.MemberRoleResponse().InteractionResponseData)
 
 	return response
-}
-
-func MemberResponse() *r.Data {
-	data := r.NewResponseData("Member role registered")
-
-	return data
 }

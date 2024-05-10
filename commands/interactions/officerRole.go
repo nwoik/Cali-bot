@@ -16,7 +16,7 @@ func OfficerRole(session *discordgo.Session, interaction *discordgo.InteractionC
 	clan, err := clanRepo.Get(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -25,13 +25,7 @@ func OfficerRole(session *discordgo.Session, interaction *discordgo.InteractionC
 	clan.OfficerRole = role.ID
 	clanRepo.Update(clan)
 
-	response := r.NewMessageResponse(OfficerResponse().InteractionResponseData)
+	response := r.NewMessageResponse(r.OfficerRoleResponse().InteractionResponseData)
 
 	return response
-}
-
-func OfficerResponse() *r.Data {
-	data := r.NewResponseData("Officer role registered")
-
-	return data
 }

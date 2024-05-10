@@ -16,7 +16,7 @@ func Unblacklist(session *discordgo.Session, interaction *discordgo.InteractionC
 	clan, err := clanRepo.Get(interaction.GuildID)
 
 	if err != nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -27,9 +27,9 @@ func Unblacklist(session *discordgo.Session, interaction *discordgo.InteractionC
 	if IsBlacklisted(clan, user.ID) {
 		clan.Blacklist, _ = Remove(clan.Blacklist, user.ID)
 		clanRepo.Update(clan)
-		response = r.NewMessageResponse(r.NewResponseData("User has been removed from clan blacklist").InteractionResponseData)
+		response = r.NewMessageResponse(r.RemovedFromBlackList().InteractionResponseData)
 	} else {
-		response = r.NewMessageResponse(r.NewResponseData("User is not blacklisted").InteractionResponseData)
+		response = r.NewMessageResponse(r.MemberNotBlacklisted().InteractionResponseData)
 	}
 
 	return response

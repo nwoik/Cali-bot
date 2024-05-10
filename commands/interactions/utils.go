@@ -304,7 +304,7 @@ func RemoveClanMember(clan *c.Clan, member *m.Member, session *discordgo.Session
 	return member, r.ClanMemberNotFound()
 }
 
-func Remove(slice []string, value string) ([]string, *r.Data) {
+func Remove(slice []string, value string) ([]string, Status) {
 	index := -1
 	for i, v := range slice {
 		if v == value {
@@ -314,9 +314,9 @@ func Remove(slice []string, value string) ([]string, *r.Data) {
 	}
 
 	if index != -1 {
-		return append(slice[:index], slice[index+1:]...), r.ClanMemberRemoved()
+		return append(slice[:index], slice[index+1:]...), Removed
 	}
-	return slice, r.ClanMemberNotFound()
+	return slice, NotFound
 }
 
 func RemoveRole(session *discordgo.Session, interaction *discordgo.InteractionCreate, guildMember *discordgo.Member, roleid string) {
