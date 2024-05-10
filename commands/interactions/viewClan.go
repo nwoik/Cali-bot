@@ -50,7 +50,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	leader := FilterMembers(members, IsLeader(clan))
 
 	embed.SetThumbnail(guild.IconURL(""))
-	embed.AddField("", clan.ClanID, false)
+	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
 	embed.AddField("", fmt.Sprint("**Leader: **", PingRole(clan.LeaderRole)), false)
 	embed.AddField("", PrintMembers(leader), false)
