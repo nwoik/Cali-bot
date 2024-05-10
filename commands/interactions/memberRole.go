@@ -1,32 +1,31 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
+	"calibot/globals"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
+	"github.com/nwoik/calibotapi/model/clan"
 )
 
 func MemberRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	client := globals.CLIENT
+
+	clanCollection := client.Database("calibot").Collection("clan")
+	clanRepo := clan.NewClanRepo(clanCollection)
+	clan, err := clanRepo.Get(interaction.GuildID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
+
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, interaction.GuildID)
 
 	clan.MemberRole = role.ID
+	clanRepo.Update(clan)
 
-	response := r.NewMessageResponse(MemberResponse().InteractionResponseData)
-
-	c.Close("./resources/clan.json", clans)
+	response := r.NewMessageResponse(r.MemberRoleResponse().InteractionResponseData)
 
 	return response
-}
-
-func MemberResponse() *r.Data {
-	data := r.NewResponseData("Role registered")
-
-	return data
 }

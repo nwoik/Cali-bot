@@ -1,55 +1,39 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
-	"fmt"
+	r "calibot/commands/response"
+	"calibot/globals"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
-	m "github.com/nwoik/calibotapi/member"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func RemoveMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	members := m.Open("./resources/members.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	client := globals.CLIENT
+
+	clan, err := GetClan(interaction.GuildID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
-	var status Status
-
-	members, status = RemoveClanMember(clan, members, session, interaction)
-
-	// possibly for changing nicks
-	// parameters := discordgo.GuildMemberParams{}
-	// parameters.Nick = interaction.Member.Nick + " -> " + interaction.Member.User.ID
-
-	// _, err := session.GuildMemberEdit(interaction.GuildID, interaction.Member.User.ID, &parameters)
-	// if err != nil {
-	// 	fmt.Println("Error changing member nickname:", err)
-	// }
+	var data *r.Data
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
 
-	response := r.NewMessageResponse(RemoveMemberResponse(interaction, user, status).InteractionResponseData)
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+	member, err := memberRepo.Get(user.ID)
 
-	c.Close("./resources/clan.json", clans)
-	m.Close("./resources/members.json", members)
-
-	return response
-}
-
-func RemoveMemberResponse(interaction *discordgo.InteractionCreate, user *discordgo.User, status Status) *r.Data {
-	var data *r.Data
-
-	switch status {
-	case Removed:
-		data = r.NewResponseData(fmt.Sprintf("%s has been removed from the clan", user.Mention()))
-	case NotFound:
-		data = r.NewResponseData("This user isn't in the clan.")
+	if err != nil {
+		return r.NewMessageResponse(r.NewResponseData("This user registered.").InteractionResponseData)
 	}
 
-	return data
+	member, data = RemoveClanMember(clan, member, session, interaction)
+	memberRepo.Update(member)
+
+	response := r.NewMessageResponse(data.InteractionResponseData)
+
+	return response
 }

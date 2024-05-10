@@ -1,23 +1,28 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 
 	"github.com/bwmarrin/discordgo"
-	m "github.com/nwoik/calibotapi/member"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func ViewProfile(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	members := m.Open("./resources/members.json")
-
 	args := interaction.ApplicationCommandData().Options
 	var member *m.Member
+	var err error
 
 	if len(args) != 0 {
 		user := GetArgument(args, "member").UserValue(session)
-		member = GetMember(members, user.ID)
+		member, err = GetMember(user.ID)
+		if err != nil {
+			return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.").InteractionResponseData)
+		}
 	} else {
-		member = GetMember(members, interaction.Member.User.ID)
+		member, err = GetMember(interaction.Member.User.ID)
+		if err != nil {
+			return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.").InteractionResponseData)
+		}
 	}
 
 	response := r.NewMessageResponse(EmbedResponse(session, interaction, member).InteractionResponseData)

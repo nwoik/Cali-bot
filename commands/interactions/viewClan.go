@@ -1,20 +1,16 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 	e "calibot/embeds"
 	"fmt"
 
-	c "github.com/nwoik/calibotapi/clan"
-
 	"github.com/bwmarrin/discordgo"
-	m "github.com/nwoik/calibotapi/member"
+	c "github.com/nwoik/calibotapi/model/clan"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	members := m.Open("./resources/members.json")
-	clans := c.Open("./resources/clan.json")
-
 	args := interaction.ApplicationCommandData().Options
 	var clanid string
 
@@ -24,13 +20,19 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 		clanid = interaction.GuildID
 	}
 
-	clan := GetClan(clans, clanid)
-	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
-	}
-	clanMembers := FilterMembers(members, InClan(clan))
+	clan, err := GetClan(clanid)
 
-	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, clanMembers).InteractionResponseData)
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
+	}
+
+	members, err := GetMembersWithCond(Pred("clanid", clan.ClanID))
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
+	}
+
+	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members).InteractionResponseData)
 
 	return response
 }
@@ -48,13 +50,13 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	leader := FilterMembers(members, IsLeader(clan))
 
 	embed.SetThumbnail(guild.IconURL(""))
-	embed.AddField("", clan.ClanID, false)
+	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
-	embed.AddField("", fmt.Sprintf("**Leader: **%s", PingRole(clan.LeaderRole)), false)
+	embed.AddField("", fmt.Sprint("**Leader: **", PingRole(clan.LeaderRole)), false)
 	embed.AddField("", PrintMembers(leader), false)
-	embed.AddField("", fmt.Sprintf("**Officers: **%s", PingRole(clan.OfficerRole)), false)
+	embed.AddField("", fmt.Sprint("**Officers: **", PingRole(clan.OfficerRole)), false)
 	embed.AddField("", PrintMembers(officers), false)
-	embed.AddField("", fmt.Sprintf("**Members: **%s", PingRole(clan.MemberRole)), false)
+	embed.AddField("", fmt.Sprint("**Members: **", PingRole(clan.MemberRole)), false)
 	embed.AddField("", PrintMembers(regularMembers), false)
 	embed.AddField("Blacklist", PrintBlacklist(clan), false)
 

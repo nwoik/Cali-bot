@@ -2,7 +2,9 @@ package main
 
 import (
 	"calibot/commands"
-	"calibot/events"
+	events "calibot/events"
+	"calibot/globals"
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -13,8 +15,9 @@ import (
 )
 
 func main() {
-	token := os.Getenv("CALIBOT_TOKEN")
-	session, err := discordgo.New(fmt.Sprintf("Bot %s", token))
+	globals.InitConfig()
+
+	session, err := discordgo.New(fmt.Sprintf("Bot %s", globals.TOKEN))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,6 +40,7 @@ func main() {
 	}
 
 	defer session.Close()
+	defer globals.CLIENT.Disconnect(context.Background())
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)

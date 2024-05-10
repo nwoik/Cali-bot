@@ -1,20 +1,16 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
-	"fmt"
+	r "calibot/commands/response"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
-	m "github.com/nwoik/calibotapi/member"
 )
 
 func Demote(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	members := m.Open("./resources/members.json")
-	clan := GetClan(clans, interaction.GuildID)
+	clan, _ := GetClan(interaction.GuildID)
+
 	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+		return r.NewMessageResponse(r.ClanNotRegistered().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
@@ -23,9 +19,7 @@ func Demote(session *discordgo.Session, interaction *discordgo.InteractionCreate
 
 	RemoveRole(session, interaction, member, clan.OfficerRole)
 
-	response := r.NewMessageResponse(r.NewResponseData(fmt.Sprintf("%s has been demoted :cry:", user.Mention())).InteractionResponseData)
+	response := r.NewMessageResponse(r.OfficerDemoted(user).InteractionResponseData)
 
-	c.Close("./resources/clan.json", clans)
-	m.Close("./resources/members.json", members)
 	return response
 }

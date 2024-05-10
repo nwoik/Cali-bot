@@ -1,34 +1,29 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
-	"fmt"
+	r "calibot/commands/response"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
-	m "github.com/nwoik/calibotapi/member"
 )
 
 func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	members := m.Open("./resources/members.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	clan, err := GetClan(interaction.GuildID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
-	member := GetMember(members, user.ID)
-	if member == nil {
-		return r.NewMessageResponse(r.NewResponseData("This user is not registered with the bot.\nThey must register with the bot and clan to be an officer").InteractionResponseData)
+	member, err := GetMember(user.ID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.CantPromoteNonMember().InteractionResponseData)
 	}
 
 	AddRole(session, interaction, member, clan.OfficerRole)
 
-	response := r.NewMessageResponse(r.NewResponseData(fmt.Sprintf("%s has been appointed as officer :man_police_officer:", user.Mention())).InteractionResponseData)
+	response := r.NewMessageResponse(r.Promote(user).InteractionResponseData)
 
-	c.Close("./resources/clan.json", clans)
-	m.Close("./resources/members.json", members)
 	return response
 }

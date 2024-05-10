@@ -1,41 +1,22 @@
 package interactions
 
 import (
-	r "calibot/commands/responses"
+	r "calibot/commands/response"
 
 	"github.com/bwmarrin/discordgo"
-	c "github.com/nwoik/calibotapi/clan"
 )
 
 func AddClanRole(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
-	clans := c.Open("./resources/clan.json")
-	clan := GetClan(clans, interaction.GuildID)
-	if clan == nil {
-		return r.NewMessageResponse(r.NewResponseData("This server doesn't have a clan registered to it. Use `/register-clan`").InteractionResponseData)
+	clan, err := GetClan(interaction.GuildID)
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
 	args := interaction.ApplicationCommandData().Options
 	role := GetArgument(args, "role").RoleValue(session, clan.GuildID)
 
-	var status Status
-	clan.ExtraRoles, status = AddExtraRole(clan.ExtraRoles, role.ID)
-
-	response := r.NewMessageResponse(RoleAdditionResponse(status).InteractionResponseData)
-
-	c.Close("./resources/clan.json", clans)
+	response := r.NewMessageResponse(AddExtraRole(clan, role.ID).InteractionResponseData)
 
 	return response
-}
-
-func RoleAdditionResponse(status Status) *r.Data {
-	var data *r.Data
-
-	switch status {
-	case RoleAdded:
-		data = r.NewResponseData("Role has been added to clan members")
-	case AlreadyAdded:
-		data = r.NewResponseData("Role is already to the clan members")
-	}
-
-	return data
 }
