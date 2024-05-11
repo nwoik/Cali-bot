@@ -54,11 +54,11 @@ func RegisterCommand(s *discordgo.Session) error {
 	unblacklist.Options = append(unblacklist.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
 	addClanRole := NewChatApplicationCommand("add-clan-role", "Adds an extra role you want members to be assigned").
-		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	addClanRole.Options = append(addClanRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
 	removeClanRole := NewChatApplicationCommand("remove-clan-role", "Removes a role from the clan's extra roles").
-		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
+		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	removeClanRole.Options = append(removeClanRole.Options, NewCommandOption("role", "The @ of the role", discordgo.ApplicationCommandOptionRole, true).ApplicationCommandOption)
 
 	appoint := NewChatApplicationCommand("promote", "Promotes a member to officer for the clan").
