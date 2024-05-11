@@ -2,7 +2,7 @@ package interactions
 
 import (
 	r "calibot/commands/response"
-	e "calibot/embeds"
+	e "calibot/components/embeds"
 	"calibot/globals"
 	"fmt"
 

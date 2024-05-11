@@ -1,7 +1,7 @@
 package response
 
 import (
-	embeds "calibot/embeds"
+	embeds "calibot/components/embeds"
 
 	"github.com/bwmarrin/discordgo"
 )

@@ -1,4 +1,4 @@
-package events
+package embeds
 
 import (
 	"github.com/bwmarrin/discordgo"
