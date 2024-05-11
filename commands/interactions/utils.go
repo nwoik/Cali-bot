@@ -81,6 +81,31 @@ func AddMember(interaction *discordgo.InteractionCreate) *r.Data {
 	return r.UserAlreadyRegistered()
 }
 
+func AddMemberFields(embed *e.Embed, members []*m.Member) *e.Embed {
+
+	for _, member := range members {
+		embed.AddField("", PrintMember(member), false)
+	}
+
+	if len(members) == 0 {
+		embed.AddField("", "None", false)
+	}
+
+	return embed
+}
+
+func AddBlacklistFields(embed *e.Embed, ids []string) *e.Embed {
+	for _, id := range ids {
+		embed.AddField("", PingUser(id), false)
+	}
+
+	if len(ids) == 0 {
+		embed.AddField("", "None", false)
+	}
+
+	return embed
+}
+
 func AddClanMember(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Data {
 	client := globals.CLIENT
 
@@ -271,19 +296,6 @@ func PrintBlacklist(clan *c.Clan) string {
 
 func PrintMember(member *m.Member) string {
 	return fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
-}
-
-func AddMemberFields(embed *e.Embed, members []*m.Member) *e.Embed {
-
-	for _, member := range members {
-		embed.AddField("", PrintMember(member), false)
-	}
-
-	if len(members) == 0 {
-		embed.AddField("", "None", false)
-	}
-
-	return embed
 }
 
 func PrintMembers(members []*m.Member) string {
