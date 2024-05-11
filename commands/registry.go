@@ -69,6 +69,11 @@ func RegisterCommand(s *discordgo.Session) error {
 		SetDefaultMemberPermissions(discordgo.PermissionManageServer)
 	demote.Options = append(demote.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
 
+	updateProfile := NewChatApplicationCommand("update-profile", "Updates user details").
+		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
+	updateProfile.Options = append(updateProfile.Options, NewCommandOption("ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
+	updateProfile.Options = append(updateProfile.Options, NewCommandOption("gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
+
 	help := NewChatApplicationCommand("help", "Lists the bot's commands").
 		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
 
@@ -89,6 +94,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	globalCommands = append(globalCommands, removeClanRole.ApplicationCommand)
 	globalCommands = append(globalCommands, appoint.ApplicationCommand)
 	globalCommands = append(globalCommands, demote.ApplicationCommand)
+	globalCommands = append(globalCommands, updateProfile.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", globalCommands)

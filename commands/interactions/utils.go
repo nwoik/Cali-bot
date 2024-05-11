@@ -78,10 +78,6 @@ func AddMember(interaction *discordgo.InteractionCreate) *r.Data {
 		return r.AcceptedMember(interaction.Member.User)
 	}
 
-	member.IGN = ign
-	member.IGID = gameid
-	memberRepo.Update(member)
-
 	return r.UserAlreadyRegistered()
 }
 
@@ -330,6 +326,34 @@ func RemoveRoles(session *discordgo.Session, interaction *discordgo.InteractionC
 	for _, roleID := range guildMember.Roles {
 		RemoveRole(session, interaction, guildMember, roleID)
 	}
+}
+
+func UpdateMember(interaction *discordgo.InteractionCreate) *r.Data {
+	client := globals.CLIENT
+
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+
+	args := interaction.ApplicationCommandData().Options
+	gameid := GetArgument(args, "gameid").StringValue()
+	ign := GetArgument(args, "ign").StringValue()
+
+	if len(gameid) < 7 {
+		return r.InvalidMemberID(interaction)
+	}
+
+	userid := interaction.Member.User.ID
+
+	member, err := memberRepo.Get(userid)
+
+	if err == nil {
+		member.IGN = ign
+		member.IGID = gameid
+		memberRepo.Update(member)
+
+		return r.DetailsUpdated()
+	}
+	return r.UserNotRegistered()
 }
 
 func IsRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {

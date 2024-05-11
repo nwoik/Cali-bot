@@ -22,6 +22,10 @@ func UserNotRegistered() *Data {
 	return NewResponseData("User is not registered with the bot. User `/register`")
 }
 
+func DetailsUpdated() *Data {
+	return NewResponseData("Details have been updated. Use `/view-profile` to see changes")
+}
+
 func ClanNotRegisteredWithGuild() *Data {
 	return NewResponseData("Clan is not registered with the server. User `register-clan`")
 }
@@ -67,7 +71,7 @@ func RoleNotFound() *Data {
 }
 
 func RegisteredMember(interaction *discordgo.InteractionCreate) *Data {
-	return NewResponseData("Registered " + interaction.Member.User.Mention())
+	return NewResponseData("Registered " + interaction.Member.User.Mention() + ". Use `view-profile` to see details")
 }
 
 func InvalidMemberID(interaction *discordgo.InteractionCreate) *Data {
@@ -75,7 +79,7 @@ func InvalidMemberID(interaction *discordgo.InteractionCreate) *Data {
 }
 
 func UserAlreadyRegistered() *Data {
-	return NewResponseData("User is already registered. Details were updated")
+	return NewResponseData("User is already registered. Please use the `/update-profile` command")
 }
 
 func RegisteredClan(name string) *Data {
