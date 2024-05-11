@@ -19,7 +19,7 @@ var (
 )
 
 func InitConfig() {
-	TOKEN = os.Getenv("SQUIRE_TOKEN")
+	TOKEN = os.Getenv("CALIBOT_TOKEN")
 	MONGO_PASS = os.Getenv("MONGO_PASS")
 	SERVER_PORT = "58839"
 	SERVER_HOST = "mongodb://mongo:" + MONGO_PASS + "@viaduct.proxy.rlwy.net:" + SERVER_PORT + "/?tlsCertificateKeyFilePassword=" + MONGO_PASS
