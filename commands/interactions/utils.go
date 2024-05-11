@@ -269,6 +269,23 @@ func PrintBlacklist(clan *c.Clan) string {
 	return output
 }
 
+func PrintMember(member *m.Member) string {
+	return fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
+}
+
+func AddMemberFields(embed *e.Embed, members []*m.Member) *e.Embed {
+
+	for _, member := range members {
+		embed.AddField("", PrintMember(member), false)
+	}
+
+	if len(members) == 0 {
+		embed.AddField("", "None", false)
+	}
+
+	return embed
+}
+
 func PrintMembers(members []*m.Member) string {
 	var output string
 
