@@ -13,11 +13,14 @@ import (
 func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
 	args := interaction.ApplicationCommandData().Options
 	var clanid string
+	var roleInClan bool
 
 	if len(args) != 0 {
 		clanid = GetArgument(args, "clanid").StringValue()
+		roleInClan = false
 	} else {
 		clanid = interaction.GuildID
+		roleInClan = true
 	}
 
 	clan, err := GetClan(clanid)
@@ -28,16 +31,12 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 
 	members, err := GetMembersWithCond(Pred("clanid", clan.ClanID))
 
-	if err != nil {
-		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
-	}
-
-	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members).InteractionResponseData)
+	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members, roleInClan).InteractionResponseData)
 
 	return response
 }
 
-func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member) *r.Data {
+func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member, roleInClan bool) *r.Data {
 	var data *r.Data
 
 	embed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(members)), "", 0xffd700)
@@ -51,12 +50,12 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 
 	embed.SetThumbnail(guild.IconURL(""))
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
-	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
-	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PingRole(clan.LeaderRole)), false)
+	embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
+	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(leader), false)
-	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PingRole(clan.OfficerRole)), false)
+	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(officers), false)
-	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PingRole(clan.MemberRole)), false)
+	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(regularMembers), false)
 	embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 

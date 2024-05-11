@@ -246,6 +246,15 @@ func PingRole(id string) string {
 	return fmt.Sprintf("<@&%s>", id)
 }
 
+func PrintRole(id string, roleInClan bool) string {
+
+	if roleInClan == true {
+		return PingRole(id)
+	}
+
+	return ""
+}
+
 func PrintBlacklist(clan *c.Clan) string {
 	var output string
 
@@ -274,8 +283,12 @@ func PrintMembers(members []*m.Member) string {
 	return output
 }
 
-func PrintExtraRoles(clan *c.Clan) string {
+func PrintExtraRoles(clan *c.Clan, roleInClan bool) string {
 	var output string
+
+	if roleInClan == false {
+		return ""
+	}
 
 	for _, id := range clan.ExtraRoles {
 		output += PingRole(id) + " "
