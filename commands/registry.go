@@ -22,7 +22,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	viewMember.Options = append(viewMember.Options, NewCommandOption("member", "User's @", discordgo.ApplicationCommandOptionUser, false).ApplicationCommandOption)
 
 	viewClan := NewChatApplicationCommand("view-clan", "Leave clanid blank to see the clan for the server you're in").
-		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	viewClan.Options = append(viewClan.Options, NewCommandOption("clanid", "In-game id of a clan", discordgo.ApplicationCommandOptionString, false).ApplicationCommandOption)
 
 	memberRole := NewChatApplicationCommand("member-role", "Register the role you want your members to have").
