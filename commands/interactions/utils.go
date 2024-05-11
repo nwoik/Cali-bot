@@ -75,7 +75,7 @@ func AddMember(interaction *discordgo.InteractionCreate) *r.Data {
 	if err != nil {
 		member = m.CreateMember(username, ign, gameid, userid)
 		memberRepo.Insert(member)
-		return r.AcceptedMember(interaction.Member.User)
+		return r.RegisteredMember(interaction)
 	}
 
 	return r.UserAlreadyRegistered()
