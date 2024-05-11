@@ -248,7 +248,7 @@ func PingRole(id string) string {
 
 func PrintRole(id string, roleInClan bool) string {
 
-	if roleInClan == true {
+	if roleInClan {
 		return PingRole(id)
 	}
 
@@ -286,7 +286,7 @@ func PrintMembers(members []*m.Member) string {
 func PrintExtraRoles(clan *c.Clan, roleInClan bool) string {
 	var output string
 
-	if roleInClan == false {
+	if !roleInClan {
 		return ""
 	}
 
