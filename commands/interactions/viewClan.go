@@ -39,46 +39,29 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member, roleInClan bool) *r.Data {
 	var data *r.Data
 
-	titleEmbed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(members)), "", 0xffd700)
+	embed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(members)), "", 0xffd700)
 
 	guildID := interaction.GuildID
 	guild := GetGuild(session, guildID)
 
 	regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
-	officers := FilterMembers(members, IsOfficer(session, clan))
-	leader := FilterMembers(members, IsLeader(clan))
+	// officers := FilterMembers(members, IsOfficer(session, clan))
+	// leader := FilterMembers(members, IsLeader(clan))
 
-	titleEmbed.SetThumbnail(guild.IconURL(""))
-	titleEmbed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
-	titleEmbed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
-	titleEmbed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
-	titleEmbed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
-	titleEmbed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
+	embed.SetThumbnail(guild.IconURL(""))
+	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
+	// embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
+	// embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
+	// embed = AddMemberFields(embed, leader)
+	// embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
+	// embed = AddMemberFields(embed, officers)
+	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
+	embed = AddMemberFields(embed, regularMembers)
+	// embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 
-	leaderEmbed := e.NewRichEmbed("**Leader: **", fmt.Sprint("**👑 **", PrintRole(clan.LeaderRole, roleInClan)), 0xffd700)
-	leaderEmbed.SetThumbnail(guild.IconURL(""))
-	leaderEmbed = AddMemberFields(leaderEmbed, leader)
+	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
-	officerEmbed := e.NewRichEmbed("**Officers: **", fmt.Sprint("**👮 **", PrintRole(clan.OfficerRole, roleInClan)), 0xffd700)
-	officerEmbed.SetThumbnail(guild.IconURL(""))
-	officerEmbed = AddMemberFields(officerEmbed, officers)
-
-	memberEmbed := e.NewRichEmbed("**Members: **", fmt.Sprint("**:military_helmet: **", PrintRole(clan.OfficerRole, roleInClan)), 0xffd700)
-	memberEmbed.SetThumbnail(guild.IconURL(""))
-	memberEmbed = AddMemberFields(memberEmbed, regularMembers)
-
-	// blacklistEmbed := e.NewRichEmbed("**Blacklist: **", ":no_pedestrians:", 0x000000)
-	// blacklistEmbed.SetThumbnail(guild.IconURL(""))
-	// blacklistEmbed = AddBlacklistFields(blacklistEmbed, clan.Blacklist)
-
-	titleEmbed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
-
-	data = r.NewResponseData("")
-	data.Embeds = append(data.Embeds, titleEmbed.MessageEmbed)
-	data.Embeds = append(data.Embeds, leaderEmbed.MessageEmbed)
-	data.Embeds = append(data.Embeds, officerEmbed.MessageEmbed)
-	data.Embeds = append(data.Embeds, memberEmbed.MessageEmbed)
-	// data.Embeds = append(data.Embeds, blacklistEmbed.MessageEmbed)
+	data = r.NewResponseData("").AddEmbed(embed)
 
 	return data
 }
