@@ -52,13 +52,13 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.SetThumbnail(guild.IconURL(""))
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan), false)
-	embed.AddField("", fmt.Sprint("**Leader: **", PingRole(clan.LeaderRole)), false)
+	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PingRole(clan.LeaderRole)), false)
 	embed.AddField("", PrintMembers(leader), false)
-	embed.AddField("", fmt.Sprint("**Officers: **", PingRole(clan.OfficerRole)), false)
+	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PingRole(clan.OfficerRole)), false)
 	embed.AddField("", PrintMembers(officers), false)
-	embed.AddField("", fmt.Sprint("**Members: **", PingRole(clan.MemberRole)), false)
+	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PingRole(clan.MemberRole)), false)
 	embed.AddField("", PrintMembers(regularMembers), false)
-	embed.AddField("Blacklist", PrintBlacklist(clan), false)
+	embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 
 	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
