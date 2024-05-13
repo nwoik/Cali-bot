@@ -5,6 +5,7 @@ import (
 	e "calibot/components/embeds"
 	"calibot/globals"
 	"fmt"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	c "github.com/nwoik/calibotapi/model/clan"
@@ -129,7 +130,11 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 	if clan.ClanID != member.ClanID {
 		if !IsBlacklisted(clan, member.UserID) {
 			member.ClanID = clan.ClanID
+			member.Rank = "member"
+			member.DateJoined = time.Now().Format("02/01/2006")
+
 			memberRepo.Update(member)
+
 			AddRole(session, interaction, member, clan.MemberRole)
 			for _, role := range clan.ExtraRoles {
 				AddRole(session, interaction, member, role)
