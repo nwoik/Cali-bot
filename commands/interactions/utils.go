@@ -338,6 +338,8 @@ func PrintExtraRoles(clan *c.Clan, roleInClan bool) string {
 func RemoveClanMember(clan *c.Clan, member *m.Member, session *discordgo.Session, interaction *discordgo.InteractionCreate) (*m.Member, *r.Data) {
 	if clan.ClanID == member.ClanID {
 		member.ClanID = ""
+		member.DateJoined = ""
+		member.Rank = ""
 
 		guildMember, _ := GetGuildMember(session, interaction.GuildID, member.UserID)
 		RemoveRoles(session, interaction, guildMember)
