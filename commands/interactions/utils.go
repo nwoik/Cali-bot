@@ -257,6 +257,8 @@ func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *d
 		clan, err := GetClan(member.ClanID)
 		if err == nil {
 			embed.AddField("**Clan: **", clan.Name, true)
+			embed.AddField("**Joined At: **", member.DateJoined, true)
+			embed.AddField("**Rank: **", member.Rank, true)
 		}
 	}
 
