@@ -47,6 +47,8 @@ func AddClan(interaction *discordgo.InteractionCreate) *r.Data {
 		clanRepo.Insert(clan)
 
 		member.ClanID = clan.ClanID
+		member.Rank = "leader"
+		member.DateJoined = time.Now().Format("02/01/2006")
 		memberRepo.Update(member)
 		return r.RegisteredClan(name)
 	}
