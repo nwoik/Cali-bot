@@ -75,26 +75,26 @@ func ClanResponse(session *discordgo.Session, interaction *discordgo.Interaction
 	// guildID := interaction.GuildID
 	// guild := GetGuild(session, guildID)
 
-	regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
-	officers := FilterMembers(members, IsOfficer(session, clan))
-	leader := FilterMembers(members, IsLeader(clan))
+	// regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
+	// officers := FilterMembers(members, IsOfficer(session, clan))
+	// leader := FilterMembers(members, IsLeader(clan))
 
 	output += fmt.Sprintf("Clan ID: %s\n", clan.ClanID)
 	output += fmt.Sprintf("**Extra Roles: **%s\n", PrintExtraRoles(clan, roleInClan))
 
-	output += fmt.Sprintf("**Leader: 👑 **%s\n", PrintRole(clan.LeaderRole, roleInClan))
-	output += fmt.Sprintf(PrintMembers(leader))
-	output += "\n"
+	// output += fmt.Sprintf("**Leader: 👑 **%s\n", PrintRole(clan.LeaderRole, roleInClan))
+	// output += fmt.Sprintf(PrintMembers(leader))
+	// output += "\n"
 
-	output += fmt.Sprintf("**Officers: 👮 **%s\n", PrintRole(clan.OfficerRole, roleInClan))
-	output += fmt.Sprintf(PrintMembers(officers))
-	output += "\n"
+	// output += fmt.Sprintf("**Officers: 👮 **%s\n", PrintRole(clan.OfficerRole, roleInClan))
+	// output += fmt.Sprintf(PrintMembers(officers))
+	// output += "\n"
 
 	output += fmt.Sprintf("**Members: :military_helmet: **%s\n", PrintRole(clan.MemberRole, roleInClan))
-	output += fmt.Sprintf(PrintMembers(regularMembers))
+	output += fmt.Sprintf(PrintMembers(members))
 	output += "\n"
 
-	output += fmt.Sprint("**Blacklist :no_pedestrians: **")
+	output += fmt.Sprint("**Blacklist :no_pedestrians: **\n")
 	output += PrintBlacklist(clan)
 
 	data = r.NewResponseData(output)
