@@ -304,14 +304,14 @@ func PrintBlacklist(clan *c.Clan) string {
 }
 
 func PrintMember(member *m.Member) string {
-	return fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
+	return fmt.Sprintf("%s **IGN: **%s **ID: **%s **Date-Joined:** %s\n", PingUser(member.UserID), member.IGN, member.IGID, member.DateJoined)
 }
 
 func PrintMembers(members []*m.Member) string {
 	var output string
 
 	for _, member := range members {
-		output += fmt.Sprintf("%s **IGN: **%s **ID: **%s\n", PingUser(member.UserID), member.IGN, member.IGID)
+		output += PrintMember(member)
 	}
 
 	if output == "" {
