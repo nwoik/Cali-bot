@@ -31,7 +31,7 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 
 	members, err := GetMembersWithCond(Pred("clanid", clan.ClanID))
 
-	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members, roleInClan).InteractionResponseData)
+	response := r.NewMessageResponse(ClanResponse(session, interaction, clan, members, roleInClan).InteractionResponseData)
 
 	return response
 }
@@ -62,6 +62,42 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
 	data = r.NewResponseData("").AddEmbed(embed)
+
+	return data
+}
+
+func ClanResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member, roleInClan bool) *r.Data {
+	var data *r.Data
+
+	output := ""
+	output += fmt.Sprintf("**%s (%d/50)**\n", clan.Name, len(members))
+
+	// guildID := interaction.GuildID
+	// guild := GetGuild(session, guildID)
+
+	regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
+	officers := FilterMembers(members, IsOfficer(session, clan))
+	leader := FilterMembers(members, IsLeader(clan))
+
+	output += fmt.Sprintf("Clan ID: %s\n", clan.ClanID)
+	output += fmt.Sprintf("**Extra Roles: **%s\n", PrintExtraRoles(clan, roleInClan))
+
+	output += fmt.Sprintf("**Leader: 👑 **%s\n", PrintRole(clan.LeaderRole, roleInClan))
+	output += fmt.Sprintf(PrintMembers(leader))
+	output += "\n"
+
+	output += fmt.Sprintf("**Officers: 👮 **%s\n", PrintRole(clan.OfficerRole, roleInClan))
+	output += fmt.Sprintf(PrintMembers(officers))
+	output += "\n"
+
+	output += fmt.Sprintf("**Members: :military_helmet: **%s\n", PrintRole(clan.MemberRole, roleInClan))
+	output += fmt.Sprintf(PrintMembers(regularMembers))
+	output += "\n"
+
+	output += fmt.Sprint("**Blacklist :no_pedestrians: **")
+	output += PrintBlacklist(clan)
+
+	data = r.NewResponseData(output)
 
 	return data
 }

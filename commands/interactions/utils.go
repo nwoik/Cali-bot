@@ -288,7 +288,7 @@ func PrintBlacklist(clan *c.Clan) string {
 	}
 
 	if output == "" {
-		output = "None"
+		output = "None\n"
 	}
 
 	return output
@@ -306,7 +306,7 @@ func PrintMembers(members []*m.Member) string {
 	}
 
 	if output == "" {
-		output = "None"
+		output = "None\n"
 	}
 
 	return output
@@ -324,7 +324,7 @@ func PrintExtraRoles(clan *c.Clan, roleInClan bool) string {
 	}
 
 	if output == "" {
-		output = "None"
+		output = "None\n"
 	}
 
 	return output
