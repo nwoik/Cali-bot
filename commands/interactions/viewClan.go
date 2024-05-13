@@ -45,19 +45,19 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	guild := GetGuild(session, guildID)
 
 	regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
-	// officers := FilterMembers(members, IsOfficer(session, clan))
-	// leader := FilterMembers(members, IsLeader(clan))
+	officers := FilterMembers(members, IsOfficer(session, clan))
+	leader := FilterMembers(members, IsLeader(clan))
 
 	embed.SetThumbnail(guild.IconURL(""))
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
-	// embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
-	// embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
-	// embed = AddMemberFields(embed, leader)
-	// embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
-	// embed = AddMemberFields(embed, officers)
+	embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
+	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PingRole(clan.LeaderRole)), false)
+	embed.AddField("", PrintMembers(leader), false)
+	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
+	embed.AddField("", PrintMembers(officers), false)
 	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
-	embed = AddMemberFields(embed, regularMembers)
-	// embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
+	embed.AddField("", PrintMembers(regularMembers), false)
+	embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 
 	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
