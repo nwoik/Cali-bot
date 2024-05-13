@@ -22,6 +22,7 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	}
 
 	AddRole(session, interaction, member, clan.OfficerRole)
+	member.Rank = "officer"
 
 	response := r.NewMessageResponse(r.Promote(user).InteractionResponseData)
 
