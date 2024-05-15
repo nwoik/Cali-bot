@@ -12,17 +12,13 @@ import (
 
 var (
 	SERVER_HOST string
-	SERVER_PORT string
 	TOKEN       string
-	MONGO_PASS  string
 	CLIENT      *mongo.Client
 )
 
 func InitConfig() {
 	TOKEN = os.Getenv("CALIBOT_TOKEN")
-	MONGO_PASS = os.Getenv("MONGO_PASS")
-	SERVER_PORT = "58839"
-	SERVER_HOST = "mongodb://mongo:" + MONGO_PASS + "@viaduct.proxy.rlwy.net:" + SERVER_PORT + "/?tlsCertificateKeyFilePassword=" + MONGO_PASS
+	SERVER_HOST = os.Getenv("MONGO_URL")
 	var err error
 	CLIENT, err = NewMongoClient()
 	if err != nil {
@@ -31,9 +27,8 @@ func InitConfig() {
 }
 
 func NewMongoClient() (*mongo.Client, error) {
-	pswd := MONGO_PASS
 	mongoClient, err := mongo.Connect(context.Background(),
-		options.Client().ApplyURI("mongodb://mongo:"+pswd+"@viaduct.proxy.rlwy.net:58839/?tlsCertificateKeyFilePassword="+pswd))
+		options.Client().ApplyURI(SERVER_HOST))
 
 	if err != nil {
 		log.Println("error connecting to db", err)
