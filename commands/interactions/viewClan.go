@@ -48,34 +48,34 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
 	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
-	embed.AddField("", PrintMember(leader[0]), false)
+	embed.AddField("", PrintMembers(leader), false)
 	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(officers), false)
 
-	memberEmbed := e.NewRichEmbed("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), 0xd912c4)
-	// memberEmbed.AddField("", fmt.Sprint("**Members: :military_helmet: **"), false)
+	// memberEmbed := e.NewRichEmbed("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), 0xd912c4)
+	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
 	ms := ""
 	for i, member := range regularMembers {
 		ms += PrintMember(member)
 		if (i%10 == 0 && i != 0) || member == regularMembers[len(regularMembers)-1] {
-			memberEmbed.AddField("", ms, false)
+			embed.AddField("", ms, false)
 			ms = ""
 		}
 	}
 
-	blacklistEmbed := e.NewRichEmbed("", fmt.Sprint("**Blacklist :no_pedestrians: **"), 0x000)
+	// blacklistEmbed := e.NewRichEmbed("", fmt.Sprint("**Blacklist :no_pedestrians: **"), 0x000)
+	embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 	for i, id := range clan.Blacklist {
 		ms += PingUser(id) + "\n"
 		if (i%10 == 0 && i != 0) || id == clan.Blacklist[len(clan.Blacklist)-1] {
-			blacklistEmbed.AddField("", ms, false)
+			embed.AddField("", ms, false)
 			ms = ""
 		}
 	}
-	// memberEmbed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 
-	// embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
+	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
 
-	data = r.NewResponseData("").AddEmbed(embed).AddEmbed(memberEmbed).AddEmbed(blacklistEmbed)
+	data = r.NewResponseData("").AddEmbed(embed)
 
 	return data
 }
