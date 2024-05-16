@@ -29,9 +29,8 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
 	}
 
-	members, err := GetMembersWithCond(Pred("clanid", clan.ClanID))
-
-	response := r.NewMessageResponse(ClanResponse(session, interaction, clan, members, roleInClan).InteractionResponseData)
+	members, _ := GetMembersWithCond(Pred("clanid", clan.ClanID))
+	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members, roleInClan).InteractionResponseData)
 
 	return response
 }
@@ -41,27 +40,42 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 
 	embed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(members)), "", 0xffd700)
 
-	guildID := interaction.GuildID
-	guild := GetGuild(session, guildID)
+	regularMembers, _ := GetMembersWithCond(Pred("clanid", clan.ClanID), Pred("rank", string(m.MEMBER)))
+	officers, _ := GetMembersWithCond(Pred("clanid", clan.ClanID), Pred("rank", string(m.OFFICER)))
+	leader, _ := GetMembersWithCond(Pred("clanid", clan.ClanID), Pred("rank", string(m.LEADER)))
 
-	regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
-	officers := FilterMembers(members, IsOfficer(session, clan))
-	leader := FilterMembers(members, IsLeader(clan))
-
-	embed.SetThumbnail(guild.IconURL(""))
+	embed.SetThumbnail(GetGuild(session, interaction.GuildID).IconURL(""))
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
-	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PingRole(clan.LeaderRole)), false)
-	embed.AddField("", PrintMembers(leader), false)
+	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
+	embed.AddField("", PrintMember(leader[0]), false)
 	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(officers), false)
-	embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
-	embed.AddField("", PrintMembers(regularMembers), false)
-	embed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
 
-	embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
+	memberEmbed := e.NewRichEmbed("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), 0xd912c4)
+	// memberEmbed.AddField("", fmt.Sprint("**Members: :military_helmet: **"), false)
+	ms := ""
+	for i, member := range regularMembers {
+		ms += PrintMember(member)
+		if (i%10 == 0 && i != 0) || member == regularMembers[len(regularMembers)-1] {
+			memberEmbed.AddField("", ms, false)
+			ms = ""
+		}
+	}
 
-	data = r.NewResponseData("").AddEmbed(embed)
+	blacklistEmbed := e.NewRichEmbed("", fmt.Sprint("**Blacklist :no_pedestrians: **"), 0x000)
+	for i, id := range clan.Blacklist {
+		ms += PingUser(id) + "\n"
+		if (i%10 == 0 && i != 0) || id == clan.Blacklist[len(clan.Blacklist)-1] {
+			blacklistEmbed.AddField("", ms, false)
+			ms = ""
+		}
+	}
+	// memberEmbed.AddField("Blacklist :no_pedestrians:", PrintBlacklist(clan), false)
+
+	// embed.SetFooter(fmt.Sprintf("Requested by %s", interaction.Member.User.Username), interaction.Member.User.AvatarURL(""))
+
+	data = r.NewResponseData("").AddEmbed(embed).AddEmbed(memberEmbed).AddEmbed(blacklistEmbed)
 
 	return data
 }
@@ -72,23 +86,8 @@ func ClanResponse(session *discordgo.Session, interaction *discordgo.Interaction
 	output := ""
 	output += fmt.Sprintf("**%s (%d/50)**\n", clan.Name, len(members))
 
-	// guildID := interaction.GuildID
-	// guild := GetGuild(session, guildID)
-
-	// regularMembers := FilterMembers(members, And(IsMember(session, clan), Negate(IsOfficer(session, clan)), Negate(IsLeader(clan))))
-	// officers := FilterMembers(members, IsOfficer(session, clan))
-	// leader := FilterMembers(members, IsLeader(clan))
-
 	output += fmt.Sprintf("Clan ID: %s\n", clan.ClanID)
 	output += fmt.Sprintf("**Extra Roles: **%s\n", PrintExtraRoles(clan, roleInClan))
-
-	// output += fmt.Sprintf("**Leader: 👑 **%s\n", PrintRole(clan.LeaderRole, roleInClan))
-	// output += fmt.Sprintf(PrintMembers(leader))
-	// output += "\n"
-
-	// output += fmt.Sprintf("**Officers: 👮 **%s\n", PrintRole(clan.OfficerRole, roleInClan))
-	// output += fmt.Sprintf(PrintMembers(officers))
-	// output += "\n"
 
 	output += fmt.Sprintf("**Members: :military_helmet: **%s\n", PrintRole(clan.MemberRole, roleInClan))
 	output += fmt.Sprintf(PrintMembers(members))

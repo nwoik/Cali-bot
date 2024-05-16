@@ -3,6 +3,8 @@ package interactions
 import (
 	r "calibot/commands/response"
 
+	m "github.com/nwoik/calibotapi/model/member"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -22,7 +24,7 @@ func Promote(session *discordgo.Session, interaction *discordgo.InteractionCreat
 	}
 
 	AddRole(session, interaction, member, clan.OfficerRole)
-	member.Rank = "officer"
+	member.Rank = string(m.OFFICER)
 
 	response := r.NewMessageResponse(r.Promote(user).InteractionResponseData)
 

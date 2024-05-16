@@ -11,14 +11,8 @@ github.com/klauspost/compress v1.13.6 h1:P76CopJELS0TiO2mebmnzgWaajssP/EszplttgQ
 github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
 github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe h1:iruDEfMl2E6fbMZ9s0scYfZQ84/6SPL6zC8ACM2oIL0=
 github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe/go.mod h1:wL8QJuTMNUDYhXwkmfOly8iTdp5TEcJFWZD2D7SIkUc=
-github.com/nwoik/calibotapi v0.0.0-20240506071840-08262a2d5d33 h1:+nH43M/lP0jbSeX9lNAsH8n0DlaxsgCAWhnxt22xRPs=
-github.com/nwoik/calibotapi v0.0.0-20240506071840-08262a2d5d33/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
-github.com/nwoik/calibotapi v0.0.0-20240506080950-3c1589e5f123 h1:2lV7SgxqntDEIDAB8hpNaGC78kuA2H3+7qoJj7ILiDU=
-github.com/nwoik/calibotapi v0.0.0-20240506080950-3c1589e5f123/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
-github.com/nwoik/calibotapi v0.0.0-20240513183142-d8d7d04e6e67 h1:Y6qIySHd4f1+NHsJQkJqWV2w/p/PFAUueNvUvi9w+NY=
-github.com/nwoik/calibotapi v0.0.0-20240513183142-d8d7d04e6e67/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
-github.com/nwoik/calibotapi v0.0.0-20240513191349-ecdcf625a272 h1:YwGWyEGOtYNmUyuHyS+ymJ3bp6M/wRV+UXgpHK4jPq0=
-github.com/nwoik/calibotapi v0.0.0-20240513191349-ecdcf625a272/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
+github.com/nwoik/calibotapi v0.0.0-20240516152802-e9363d50c409 h1:z47vW3w3790zhVgnNrhE3S7whyUZu5244ZQz4oXwBPM=
+github.com/nwoik/calibotapi v0.0.0-20240516152802-e9363d50c409/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=

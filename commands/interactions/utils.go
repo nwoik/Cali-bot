@@ -47,7 +47,7 @@ func AddClan(interaction *discordgo.InteractionCreate) *r.Data {
 		clanRepo.Insert(clan)
 
 		member.ClanID = clan.ClanID
-		member.Rank = "leader"
+		member.Rank = string(m.LEADER)
 		member.DateJoined = time.Now().Format("02/01/2006")
 		memberRepo.Update(member)
 		return r.RegisteredClan(name)
@@ -132,7 +132,7 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 	if clan.ClanID != member.ClanID {
 		if !IsBlacklisted(clan, member.UserID) {
 			member.ClanID = clan.ClanID
-			member.Rank = "member"
+			member.Rank = string(m.MEMBER)
 			member.DateJoined = time.Now().Format("02/01/2006")
 
 			memberRepo.Update(member)
@@ -304,7 +304,7 @@ func PrintBlacklist(clan *c.Clan) string {
 }
 
 func PrintMember(member *m.Member) string {
-	return fmt.Sprintf("%s **IGN: **%s **ID: **%s **Date-Joined:** %s\n", PingUser(member.UserID), member.IGN, member.IGID, member.DateJoined)
+	return fmt.Sprintf("%s \n**IGN: **%s **ID: **%s **Date-Joined:** %s\n", PingUser(member.UserID), member.IGN, member.IGID, member.DateJoined)
 }
 
 func PrintMembers(members []*m.Member) string {
