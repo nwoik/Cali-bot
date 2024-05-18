@@ -48,7 +48,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	embed.AddField("", fmt.Sprint("Clan ID: ", clan.ClanID), false)
 	embed.AddField("**Extra Roles**", PrintExtraRoles(clan, roleInClan), false)
 	embed.AddField("", fmt.Sprint("**Leader: 👑 **", PrintRole(clan.LeaderRole, roleInClan)), false)
-	embed.AddField("", PrintMember(leader[0]), false)
+	embed.AddField("", PrintMembers(leader), false)
 	embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
 	embed.AddField("", PrintMembers(officers), false)
 
