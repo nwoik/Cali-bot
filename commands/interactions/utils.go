@@ -261,6 +261,8 @@ func MemberEmbed(member *m.Member, guildMember *discordgo.Member, discordUser *d
 			embed.AddField("**Clan: **", clan.Name, true)
 			embed.AddField("**Joined At: **", member.DateJoined, true)
 			embed.AddField("**Rank: **", member.Rank, true)
+			embed.AddField("**Warnings: **", fmt.Sprintf("%d", member.Warnings), false)
+
 		}
 	}
 
@@ -407,6 +409,36 @@ func UpdateMember(interaction *discordgo.InteractionCreate) *r.Data {
 		return r.DetailsUpdated()
 	}
 	return r.UserNotRegistered()
+}
+
+func WarnUser(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Data {
+	client := globals.CLIENT
+
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+
+	args := interaction.ApplicationCommandData().Options
+	user := GetArgument(args, "user").UserValue(session)
+
+	member, err := GetMember(user.ID)
+	if err != nil {
+		return r.UserNotRegistered()
+	}
+
+	commandUser, _ := GetMember(interaction.Member.User.ID)
+	if err != nil {
+		return r.UserNotRegistered()
+	}
+
+	if commandUser.ClanID == member.ClanID {
+		member.Warnings += 1
+
+		memberRepo.Update(member)
+
+		return r.UserWarned(member)
+	}
+
+	return r.ClanMemberNotFound()
 }
 
 func IsRole(session *discordgo.Session, member *m.Member, clan *c.Clan, clanRole string) bool {

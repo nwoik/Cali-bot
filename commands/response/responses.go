@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+	m "github.com/nwoik/calibotapi/model/member"
 )
 
 func AcceptedMember(user *discordgo.User) *Data {
@@ -135,4 +136,8 @@ func Promote(user *discordgo.User) *Data {
 func CantPromoteNonMember() *Data {
 	return NewResponseData("This user is not registered with the bot." +
 		"\nThey must register with the bot and clan to be an officer")
+}
+
+func UserWarned(member *m.Member) *Data {
+	return NewResponseData(fmt.Sprintf("<@%s> has been warned. **Warnings:** `%d`", member.UserID, member.Warnings))
 }

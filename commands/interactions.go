@@ -45,6 +45,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.Demote(session, interaction).InteractionResponse
 		case "update-profile":
 			response = interactions.UpdateProfile(session, interaction).InteractionResponse
+		case "warn":
+			response = interactions.Warn(session, interaction).InteractionResponse
 		}
 	} else {
 		response = &discordgo.InteractionResponse{
