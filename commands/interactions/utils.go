@@ -466,6 +466,15 @@ func WarnUser(session *discordgo.Session, interaction *discordgo.InteractionCrea
 
 	args := interaction.ApplicationCommandData().Options
 	user := GetArgument(args, "user").UserValue(session)
+	amount := GetArgument(args, "amount")
+
+	var number int
+
+	if amount == nil {
+		number = 1
+	} else {
+		number = int(amount.IntValue())
+	}
 
 	member, err := GetMember(user.ID)
 	if err != nil {
@@ -482,7 +491,7 @@ func WarnUser(session *discordgo.Session, interaction *discordgo.InteractionCrea
 	}
 
 	if commandUser.ClanID == member.ClanID {
-		member.Warnings += 1
+		member.Warnings += number
 
 		memberRepo.Update(member)
 

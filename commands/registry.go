@@ -77,6 +77,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	warn := NewChatApplicationCommand("warn", "Warns a clan member").
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	warn.Options = append(warn.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
+	warn.Options = append(warn.Options, NewCommandOption("amount", "Number of warnings to remove", discordgo.ApplicationCommandOptionInteger, false).ApplicationCommandOption)
 
 	removeWarning := NewChatApplicationCommand("remove-warning", "Removes warning from a clan member").
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
