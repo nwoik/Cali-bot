@@ -411,6 +411,53 @@ func UpdateMember(interaction *discordgo.InteractionCreate) *r.Data {
 	return r.UserNotRegistered()
 }
 
+func UnWarning(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Data {
+	client := globals.CLIENT
+
+	memberCollection := client.Database("calibot").Collection("member")
+	memberRepo := m.NewMemberRepo(memberCollection)
+
+	args := interaction.ApplicationCommandData().Options
+	user := GetArgument(args, "user").UserValue(session)
+	amount := GetArgument(args, "amount")
+
+	var number int
+
+	if amount == nil {
+		number = 1
+	} else {
+		number = int(amount.IntValue())
+	}
+
+	member, err := GetMember(user.ID)
+	if err != nil {
+		return r.UserNotRegistered()
+	}
+
+	commandUser, err := GetMember(interaction.Member.User.ID)
+	if err != nil {
+		return r.UserNotRegistered()
+	}
+
+	if commandUser.UserID == member.UserID {
+		return r.CantUnWarnYourself()
+	}
+
+	if commandUser.ClanID == member.ClanID {
+		member.Warnings -= number
+
+		if member.Warnings < 0 {
+			member.Warnings = 0
+		}
+
+		memberRepo.Update(member)
+
+		return r.WarningRemoved(member)
+	}
+
+	return r.ClanMemberNotFound()
+}
+
 func WarnUser(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Data {
 	client := globals.CLIENT
 
@@ -425,9 +472,13 @@ func WarnUser(session *discordgo.Session, interaction *discordgo.InteractionCrea
 		return r.UserNotRegistered()
 	}
 
-	commandUser, _ := GetMember(interaction.Member.User.ID)
+	commandUser, err := GetMember(interaction.Member.User.ID)
 	if err != nil {
 		return r.UserNotRegistered()
+	}
+
+	if commandUser.UserID == member.UserID {
+		return r.CantWarnYourself()
 	}
 
 	if commandUser.ClanID == member.ClanID {

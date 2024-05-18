@@ -47,6 +47,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.UpdateProfile(session, interaction).InteractionResponse
 		case "warn":
 			response = interactions.Warn(session, interaction).InteractionResponse
+		case "remove-warning":
+			response = interactions.RemoveWarning(session, interaction).InteractionResponse
 		}
 	} else {
 		response = &discordgo.InteractionResponse{

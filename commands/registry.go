@@ -74,9 +74,14 @@ func RegisterCommand(s *discordgo.Session) error {
 	updateProfile.Options = append(updateProfile.Options, NewCommandOption("ign", "Your in-game name", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 	updateProfile.Options = append(updateProfile.Options, NewCommandOption("gameid", "Your in-game id", discordgo.ApplicationCommandOptionString, true).ApplicationCommandOption)
 
-	warn := NewChatApplicationCommand("warn", "Warns a user").
+	warn := NewChatApplicationCommand("warn", "Warns a clan member").
 		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
 	warn.Options = append(warn.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
+
+	removeWarning := NewChatApplicationCommand("remove-warning", "Removes warning from a clan member").
+		SetDefaultMemberPermissions(discordgo.PermissionManageRoles)
+	removeWarning.Options = append(removeWarning.Options, NewCommandOption("user", "User's @", discordgo.ApplicationCommandOptionUser, true).ApplicationCommandOption)
+	removeWarning.Options = append(removeWarning.Options, NewCommandOption("amount", "Number of warnings to remove", discordgo.ApplicationCommandOptionInteger, false).ApplicationCommandOption)
 
 	help := NewChatApplicationCommand("help", "Lists the bot's commands").
 		SetDefaultMemberPermissions(discordgo.PermissionViewChannel)
@@ -100,6 +105,7 @@ func RegisterCommand(s *discordgo.Session) error {
 	globalCommands = append(globalCommands, demote.ApplicationCommand)
 	globalCommands = append(globalCommands, updateProfile.ApplicationCommand)
 	globalCommands = append(globalCommands, warn.ApplicationCommand)
+	globalCommands = append(globalCommands, removeWarning.ApplicationCommand)
 
 	// Register the command globally
 	_, err := s.ApplicationCommandBulkOverwrite(s.State.User.ID, "", globalCommands)

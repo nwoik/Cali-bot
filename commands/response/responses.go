@@ -138,6 +138,18 @@ func CantPromoteNonMember() *Data {
 		"\nThey must register with the bot and clan to be an officer")
 }
 
+func WarningRemoved(member *m.Member) *Data {
+	return NewResponseData(fmt.Sprintf("Warning has been removed from <@%s>. **Warnings:** `%d`", member.UserID, member.Warnings))
+}
+
 func UserWarned(member *m.Member) *Data {
 	return NewResponseData(fmt.Sprintf("<@%s> has been warned. **Warnings:** `%d`", member.UserID, member.Warnings))
+}
+
+func CantWarnYourself() *Data {
+	return NewResponseData("Can't warn yourself :face_with_hand_over_mouth:")
+}
+
+func CantUnWarnYourself() *Data {
+	return NewResponseData("Can't remove warning from yourself :face_with_hand_over_mouth:")
 }
