@@ -57,7 +57,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	ms := ""
 	for i, member := range regularMembers {
 		ms += PrintMember(member)
-		if (i%10 == 0 && i != 0) || member == regularMembers[len(regularMembers)-1] {
+		if (i%5 == 0 && i != 0) || member == regularMembers[len(regularMembers)-1] {
 			memberEmbed.AddField("", ms, false)
 			ms = ""
 		}
@@ -66,7 +66,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	blacklistEmbed := e.NewRichEmbed("", fmt.Sprint("**Blacklist :no_pedestrians: **"), 0x000)
 	for i, id := range clan.Blacklist {
 		ms += PingUser(id) + "\n"
-		if (i%10 == 0 && i != 0) || id == clan.Blacklist[len(clan.Blacklist)-1] {
+		if (i%5 == 0 && i != 0) || id == clan.Blacklist[len(clan.Blacklist)-1] {
 			blacklistEmbed.AddField("", ms, false)
 			ms = ""
 		}
