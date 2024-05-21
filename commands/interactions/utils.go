@@ -5,6 +5,7 @@ import (
 	e "calibot/components/embeds"
 	"calibot/globals"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -347,8 +348,12 @@ func RemoveClanMember(clan *c.Clan, member *m.Member, session *discordgo.Session
 		member.DateJoined = ""
 		member.Rank = ""
 
-		guildMember, _ := GetGuildMember(session, interaction.GuildID, member.UserID)
-		RemoveRoles(session, interaction, guildMember)
+		guildMember, err := GetGuildMember(session, interaction.GuildID, member.UserID)
+		if err == nil {
+			RemoveRoles(session, interaction, guildMember)
+		} else {
+			log.Println("Couldn't remove roles")
+		}
 
 		return member, r.ClanMemberRemoved()
 	}
