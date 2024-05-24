@@ -135,6 +135,7 @@ func AddClanMember(session *discordgo.Session, interaction *discordgo.Interactio
 			member.ClanID = clan.ClanID
 			member.Rank = string(m.MEMBER)
 			member.DateJoined = time.Now().Format("02/01/2006")
+			member.Warnings = 0
 
 			memberRepo.Update(member)
 
