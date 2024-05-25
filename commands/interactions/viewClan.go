@@ -162,16 +162,20 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 	data.CustomID = interaction.ID
 
 	actionRow := e.NewActionRow()
+	actionRow2 := e.NewActionRow()
 
 	previousButton := button.NewBasicButton("Previous", "clan_previous_button", discordgo.PrimaryButton, beginning)
 	homeButton := button.NewBasicButton("Home", "clan_home_button", discordgo.SecondaryButton, false)
 	nextButton := button.NewBasicButton("Next", "clan_next_button", discordgo.PrimaryButton, end)
+	blacklistButton := button.NewBasicButton("Blacklist", "blacklist_button", discordgo.DangerButton, end)
 
 	actionRow.Components = append(actionRow.Components, previousButton)
 	actionRow.Components = append(actionRow.Components, homeButton)
 	actionRow.Components = append(actionRow.Components, nextButton)
+	actionRow2.Components = append(actionRow2.Components, blacklistButton)
 
 	data.Components = append(data.Components, actionRow)
+	data.Components = append(data.Components, actionRow2)
 
 	return data
 }

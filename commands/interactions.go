@@ -58,6 +58,8 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.HomePage(session, interaction).InteractionResponse
 		case "clan_next_button":
 			response = interactions.IncPage(session, interaction, 1).InteractionResponse
+		case "blacklist_button":
+			response = interactions.ViewBlacklist(session, interaction).InteractionResponse
 			// default:
 			// 	response = &discordgo.InteractionResponse{
 			// 		Data: &discordgo.InteractionResponseData{
