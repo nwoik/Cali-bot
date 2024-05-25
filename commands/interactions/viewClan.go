@@ -152,7 +152,7 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 			embed.AddField("", ms, false)
 		} else {
 			end = true
-			embed.AddField("End", ":end:", false)
+			embed.AddField("End", ":rewind: :regional_indicator_b: :regional_indicator_a: :regional_indicator_c: :regional_indicator_k: ", false)
 		}
 	}
 
