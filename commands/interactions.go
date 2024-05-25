@@ -50,6 +50,13 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 		case "remove-warning":
 			response = interactions.RemoveWarning(session, interaction).InteractionResponse
 		}
+	} else if interaction.Type == discordgo.InteractionMessageComponent && interaction.GuildID != "" {
+		response = &discordgo.InteractionResponse{
+			Data: &discordgo.InteractionResponseData{
+				Content: interaction.Message.ID,
+			},
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+		}
 	} else {
 		response = &discordgo.InteractionResponse{
 			Data: &discordgo.InteractionResponseData{

@@ -12,6 +12,15 @@ func NewEmoji() *Emoji {
 	return &Emoji{&discordgo.ComponentEmoji{}}
 }
 
+func NewBasicEmoji(name string) *Emoji {
+	emoji := NewEmoji().
+		SetName(name).
+		SetID("").
+		SetAnimated(false)
+
+	return emoji
+}
+
 func NewComponentEmoji(name string, id string, animated bool) *Emoji {
 	emoji := NewEmoji().
 		SetName(name).

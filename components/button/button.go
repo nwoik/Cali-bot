@@ -1,6 +1,8 @@
 package button
 
 import (
+	em "calibot/components/button/emoji"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -12,19 +14,35 @@ func NewButton() *Button {
 	return &Button{&discordgo.Button{}}
 }
 
-func NewEmojiButton(label string, style discordgo.ButtonStyle, disabled bool, emoji *discordgo.ComponentEmoji) *Button {
-
+func NewBasicButton(label string, id string, style discordgo.ButtonStyle, disabled bool) *Button {
 	button := NewButton().
 		SetLabel(label).
+		SetID(id).
+		SetStyle(style).
+		SetDisabled(disabled)
+
+	return button
+}
+
+func NewEmojiButton(label string, id string, style discordgo.ButtonStyle, disabled bool, emoji string) *Button {
+	button := NewButton().
+		SetLabel(label).
+		SetID(id).
 		SetStyle(style).
 		SetDisabled(disabled).
-		SetEmoji(emoji)
+		SetEmoji(em.NewBasicEmoji(emoji).ComponentEmoji)
 
 	return button
 }
 
 func (button *Button) SetLabel(label string) *Button {
 	button.Label = label
+
+	return button
+}
+
+func (button *Button) SetID(id string) *Button {
+	button.CustomID = id
 
 	return button
 }
