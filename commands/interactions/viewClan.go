@@ -96,13 +96,13 @@ func IncPage(session *discordgo.Session, interaction *discordgo.InteractionCreat
 		}
 	}
 
-	if clanid == interaction.GuildID {
+	clan, err := GetClan(clanid)
+
+	if clan.GuildID == interaction.GuildID {
 		roleInClan = true
 	} else {
 		roleInClan = false
 	}
-
-	clan, err := GetClan(clanid)
 
 	if err != nil {
 		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
