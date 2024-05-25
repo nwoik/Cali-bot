@@ -31,6 +31,10 @@ func ClanNotRegisteredWithGuild() *Data {
 	return NewResponseData("Clan is not registered with the server. User `register-clan`")
 }
 
+func ClanNotFound() *Data {
+	return NewResponseData("Error retrieving clan")
+}
+
 func ClanMemberRemoved() *Data {
 	return NewResponseData("Member has been removed")
 }

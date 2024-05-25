@@ -51,12 +51,23 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 			response = interactions.RemoveWarning(session, interaction).InteractionResponse
 		}
 	} else if interaction.Type == discordgo.InteractionMessageComponent && interaction.GuildID != "" {
-		response = &discordgo.InteractionResponse{
-			Data: &discordgo.InteractionResponseData{
-				Content: interaction.Message.ID,
-			},
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
+		switch customID := interaction.Interaction.MessageComponentData().CustomID; customID {
+		case "clan_previous_button":
+			response = interactions.IncPage(session, interaction, -1).InteractionResponse
+		case "clan_home_button":
+			response = interactions.ViewClan(session, interaction).InteractionResponse
+		case "clan_next_button":
+			response = interactions.IncPage(session, interaction, 1).InteractionResponse
+			// default:
+			// 	response = &discordgo.InteractionResponse{
+			// 		Data: &discordgo.InteractionResponseData{
+			// 			Content: interaction.Interaction.MessageComponentData().CustomID,
+			// 		},
+			// 		Type: discordgo.InteractionResponseUpdateMessage,
+			// 	}
 		}
+		response.Type = discordgo.InteractionResponseUpdateMessage
+
 	} else {
 		response = &discordgo.InteractionResponse{
 			Data: &discordgo.InteractionResponseData{

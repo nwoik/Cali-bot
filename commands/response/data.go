@@ -37,6 +37,12 @@ func (data *Data) AddEmbed(embed *embeds.Embed) *Data {
 	return data
 }
 
+func (data *Data) AddActionRow(actionRow *embeds.ActionRow) *Data {
+	data.Components = append(data.Components, actionRow)
+
+	return data
+}
+
 // func (data *Data) AddComponent(content string) *Data {
 // 	data.Content = content
 
