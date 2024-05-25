@@ -55,7 +55,7 @@ func InteractionCreate(session *discordgo.Session, interaction *discordgo.Intera
 		case "clan_previous_button":
 			response = interactions.IncPage(session, interaction, -1).InteractionResponse
 		case "clan_home_button":
-			response = interactions.ViewClan(session, interaction).InteractionResponse
+			response = interactions.HomePage(session, interaction).InteractionResponse
 		case "clan_next_button":
 			response = interactions.IncPage(session, interaction, 1).InteractionResponse
 			// default:

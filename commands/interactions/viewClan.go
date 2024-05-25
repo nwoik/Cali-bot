@@ -38,6 +38,38 @@ func ViewClan(session *discordgo.Session, interaction *discordgo.InteractionCrea
 	return response
 }
 
+func HomePage(session *discordgo.Session, interaction *discordgo.InteractionCreate) *r.Response {
+	var roleInClan bool
+	var clanid string
+
+	message := interaction.Message
+	embed := message.Embeds[0]
+	pageNum := 0
+
+	for _, field := range embed.Fields {
+		if strings.Contains(field.Value, "Clan ID") {
+			clanid = strings.ReplaceAll(strings.Split(field.Value, ":")[1], " ", "")
+		}
+	}
+
+	if clanid == interaction.GuildID {
+		roleInClan = true
+	} else {
+		roleInClan = false
+	}
+
+	clan, err := GetClan(clanid)
+
+	if err != nil {
+		return r.NewMessageResponse(r.ClanNotRegisteredWithGuild().InteractionResponseData)
+	}
+
+	members, _ := GetMembersWithCond(Pred("clanid", clan.ClanID))
+	response := r.NewMessageResponse(ClanEmbedResponse(session, interaction, clan, members, roleInClan, pageNum).InteractionResponseData)
+
+	return response
+}
+
 func IncPage(session *discordgo.Session, interaction *discordgo.InteractionCreate, inc int) *r.Response {
 	var roleInClan bool
 	var clanid string
@@ -84,6 +116,7 @@ func IncPage(session *discordgo.Session, interaction *discordgo.InteractionCreat
 
 func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.InteractionCreate, clan *c.Clan, members []*m.Member, roleInClan bool, page int) *r.Data {
 	var data *r.Data
+	var beginning, end bool
 
 	embed := e.NewRichEmbed(fmt.Sprintf("**%s (%d/50)**", clan.Name, len(members)), "", 0xffd700)
 
@@ -100,14 +133,26 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 		embed.AddField("", PrintMembers(leader), false)
 		embed.AddField("", fmt.Sprint("**Officers: 👮 **", PrintRole(clan.OfficerRole, roleInClan)), false)
 		embed.AddField("", PrintMembers(officers), false)
+		beginning = true
 	} else {
-		embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
+		beginning, end = false, false
+
 		start := (page - 1) * 5
+		ms := ""
 		for i := 0; i < 5; i++ {
 			if (start + i) < len(regularMembers) {
 				member := regularMembers[start+i]
-				embed.AddField("", PrintMember(member), false)
+				ms += PrintMember(member)
 			}
+		}
+
+		if ms != "" {
+			embed.SetColor(0xd912c4)
+			embed.AddField("", fmt.Sprint("**Members: :military_helmet: **", PrintRole(clan.MemberRole, roleInClan)), false)
+			embed.AddField("", ms, false)
+		} else {
+			end = true
+			embed.AddField("End", ":end:", false)
 		}
 	}
 
@@ -118,10 +163,9 @@ func ClanEmbedResponse(session *discordgo.Session, interaction *discordgo.Intera
 
 	actionRow := e.NewActionRow()
 
-	previousButton := button.NewBasicButton("Previous", "clan_previous_button", discordgo.PrimaryButton, false)
-
+	previousButton := button.NewBasicButton("Previous", "clan_previous_button", discordgo.PrimaryButton, beginning)
 	homeButton := button.NewBasicButton("Home", "clan_home_button", discordgo.SecondaryButton, false)
-	nextButton := button.NewBasicButton("Next", "clan_next_button", discordgo.PrimaryButton, false)
+	nextButton := button.NewBasicButton("Next", "clan_next_button", discordgo.PrimaryButton, end)
 
 	actionRow.Components = append(actionRow.Components, previousButton)
 	actionRow.Components = append(actionRow.Components, homeButton)
