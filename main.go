@@ -25,6 +25,7 @@ func main() {
 	session.AddHandler(events.Ready)
 	session.AddHandler(events.MessageCreate)
 	session.AddHandler(events.MemberJoin)
+	session.AddHandler(events.MemberBan)
 	session.AddHandler(events.MemberLeave)
 	session.AddHandler(commands.InteractionCreate)
 	session.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
