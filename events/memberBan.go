@@ -25,6 +25,7 @@ func MemberBan(session *discordgo.Session, member *discordgo.GuildBanAdd) {
 
 	if err != nil {
 		log.Println("Clan not found")
+		return
 	}
 
 	clan = Blacklist(clan, member)

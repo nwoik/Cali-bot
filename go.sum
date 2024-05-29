@@ -11,8 +11,8 @@ github.com/klauspost/compress v1.13.6 h1:P76CopJELS0TiO2mebmnzgWaajssP/EszplttgQ
 github.com/klauspost/compress v1.13.6/go.mod h1:/3/Vjq9QcHkK5uEr5lBEmyoZ1iFhe47etQ6QUkpK6sk=
 github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe h1:iruDEfMl2E6fbMZ9s0scYfZQ84/6SPL6zC8ACM2oIL0=
 github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe/go.mod h1:wL8QJuTMNUDYhXwkmfOly8iTdp5TEcJFWZD2D7SIkUc=
-github.com/nwoik/calibotapi v0.0.0-20240518193939-fa7fbdf1c33b h1:H1MwAMH6NVO8UmIPnNlyZRCfE32E4NkTFF0ADWwMXC0=
-github.com/nwoik/calibotapi v0.0.0-20240518193939-fa7fbdf1c33b/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
+github.com/nwoik/calibotapi v0.0.0-20240527153426-815dae7d64fe h1:OtGd+ZvWFfN/TpOV+sFFJsoKxpMnStDqDBj82jFWxKI=
+github.com/nwoik/calibotapi v0.0.0-20240527153426-815dae7d64fe/go.mod h1:eZDpEV8tnyP9hgBKWMY55m5XUJQaaW9qM5AcSCNSt3M=
 github.com/xdg-go/pbkdf2 v1.0.0 h1:Su7DPu48wXMwC3bs7MCNG+z4FhcyEuz5dlvchbq0B0c=
 github.com/xdg-go/pbkdf2 v1.0.0/go.mod h1:jrpuAogTd400dnrH08LKmI/xc1MbPOebTwRqcT5RDeI=
 github.com/xdg-go/scram v1.1.2 h1:FHX5I5B4i4hKRVRBCFRxq1iQRej7WO3hhBuJf+UUySY=
